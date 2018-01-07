@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.curdflappers.minesweeper">
 
+    <uses-permission android:name="android.permission.VIBRATE"/>
+
     <application android:name="com.curdflappers.minesweeper.utils.MinesweeperApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -9,6 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <service android:name=".utils.VibrateService"/>
         <activity android:name=".GameActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -17,5 +20,6 @@
             </intent-filter>
         </activity>
     </application>
+
 
 </manifest>

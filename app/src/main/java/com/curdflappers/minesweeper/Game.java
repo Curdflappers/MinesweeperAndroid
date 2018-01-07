@@ -2,11 +2,13 @@ package com.curdflappers.minesweeper;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.view.View;
 import android.widget.Toast;
 
 import com.curdflappers.minesweeper.utils.Location;
 import com.curdflappers.minesweeper.utils.MinesweeperApp;
+import com.curdflappers.minesweeper.utils.VibrateService;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -55,6 +57,26 @@ public class Game implements View.OnClickListener, View.OnLongClickListener {
         }
     }
 
+    @Override
+    public boolean onLongClick(View view) {
+        if(gameOver) { return true; }
+        Spot s = ((SpotView)view).spot;
+        if(!mMinefieldPopulated) {
+            populateMinefield(s.getRow(), s.getCol());
+            mMinefieldPopulated = true;
+        }
+        if(sweepMode) {
+            s.flag();
+        } else {
+            s.sweep();
+        }
+
+        Intent intentVibrate = new Intent(MinesweeperApp.getAppContext(),VibrateService.class);
+        MinesweeperApp.getAppContext().startService(intentVibrate);
+
+        return true;
+    }
+
     private void populateMinefield(int row, int col) {
         // Place mines
         ArrayList<Location> locations = new ArrayList<>();
@@ -97,22 +119,6 @@ public class Game implements View.OnClickListener, View.OnLongClickListener {
     private boolean validLoc(int r, int c) {
         return r >= 0 && r < mSpots.length
                 && c >=0 && c < mSpots[r].length;
-    }
-
-    @Override
-    public boolean onLongClick(View view) {
-        if(gameOver) { return true; }
-        Spot s = ((SpotView)view).spot;
-        if(!mMinefieldPopulated) {
-            populateMinefield(s.getRow(), s.getCol());
-            mMinefieldPopulated = true;
-        }
-        if(sweepMode) {
-            s.flag();
-        } else {
-            s.sweep();
-        }
-        return true;
     }
 
     public void update(Spot spot) {
