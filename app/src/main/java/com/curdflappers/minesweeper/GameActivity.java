@@ -29,6 +29,13 @@ public class GameActivity extends AppCompatActivity {
             }
         });
 
+        findViewById(R.id.mode_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                game.toggleMode();
+            }
+        });
+
         ViewTreeObserver viewTreeObserver = minefield.getViewTreeObserver();
         if(viewTreeObserver.isAlive()) {
             viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {

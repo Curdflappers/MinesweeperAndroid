@@ -72,4 +72,9 @@ public class Spot {
         mMine = false;
         mView.update();
     }
+
+    public void flag() {
+        mFlagged = !mFlagged;
+        updateState();
+    }
 }

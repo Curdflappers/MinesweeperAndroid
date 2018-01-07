@@ -1,5 +1,6 @@
 package com.curdflappers.minesweeper;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.View;
 import android.widget.Toast;
@@ -16,6 +17,7 @@ public class Game implements View.OnClickListener, View.OnLongClickListener {
     boolean mMinefieldPopulated;
     Context mContext;
     boolean sweepMode;
+    boolean gameOver;
 
     public Game(Context context) {
         mSpots = new Spot[Config.rows][Config.cols];
@@ -28,6 +30,7 @@ public class Game implements View.OnClickListener, View.OnLongClickListener {
         }
         mContext = context;
         sweepMode = true;
+        gameOver = false;
     }
 
     public Spot[][] getSpots() {
@@ -40,6 +43,7 @@ public class Game implements View.OnClickListener, View.OnLongClickListener {
 
     @Override
     public void onClick(View view) {
+        if(gameOver) { return; }
         Spot s = ((SpotView)view).spot;
         if(!mMinefieldPopulated) {
             populateMinefield(s.getRow(), s.getCol());
@@ -48,7 +52,7 @@ public class Game implements View.OnClickListener, View.OnLongClickListener {
         if(sweepMode) {
             s.sweep();
         } else {
-            // flag mode
+            s.flag();
         }
     }
 
@@ -98,6 +102,7 @@ public class Game implements View.OnClickListener, View.OnLongClickListener {
 
     @Override
     public boolean onLongClick(View view) {
+        // TODO: 2018-01-07 do opposite action of mode
         return true;
     }
 
@@ -120,6 +125,7 @@ public class Game implements View.OnClickListener, View.OnLongClickListener {
     }
 
     private void gameOver() {
+        gameOver = true;
         Toast.makeText(mContext, "Game over!", Toast.LENGTH_SHORT).show();
         for (Spot[] row : mSpots) {
             for (Spot spot : row) {
@@ -129,11 +135,26 @@ public class Game implements View.OnClickListener, View.OnLongClickListener {
     }
 
     public void reset() {
+        gameOver = false;
         mMinefieldPopulated = false;
+
         for (Spot[] row : mSpots) {
             for (Spot spot : row) {
                 spot.reset();
             }
         }
+
+        // Games start in sweep mode
+        if(!sweepMode)
+            toggleMode();
+    }
+
+    @SuppressLint("DefaultLocale")
+    public void toggleMode() {
+        if(gameOver) { return; }
+        sweepMode = !sweepMode;
+        Toast.makeText(mContext,
+                String.format("Now in %s mode", sweepMode ? "sweep" : "flag"),
+                Toast.LENGTH_SHORT).show();
     }
 }
