@@ -11,6 +11,7 @@ public class GameActivity extends AppCompatActivity {
 
     RelativeLayout minefield;
     private int minefieldWidth, minefieldHeight;
+    Game game;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,6 +20,7 @@ public class GameActivity extends AppCompatActivity {
         setToFullScreen();
 
         minefield = findViewById(R.id.minefield);
+        game = new Game(this);
 
         ViewTreeObserver viewTreeObserver = minefield.getViewTreeObserver();
         if(viewTreeObserver.isAlive()) {
@@ -28,27 +30,36 @@ public class GameActivity extends AppCompatActivity {
                     minefield.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                     minefieldWidth = minefield.getWidth();
                     minefieldHeight = minefield.getHeight();
-                    fillMineField();
+                    showMineField();
                 }
             });
         }
     }
 
-    private void fillMineField() {
+    private void connectSpot(SpotView view, int row, int col) {
+        Spot spot = game.getSpots()[row][col];
+        view.spot = spot;
+        spot.setView(view);
+        view.setOnClickListener(game);
+    }
+
+    private void showMineField() {
         int x = 0, y = 0, offsetX = 0, offsetY = 0;
 
+        // Set up visual formatting
         int sideLength = Math.min(minefieldWidth / Config.cols, minefieldHeight / Config.rows);
-        if(sideLength < minefieldWidth / Config.cols) { // vertical empty space
-            // horizontal offset
+        if(sideLength < minefieldWidth / Config.cols) { // horizontal offset
             offsetX = (minefieldWidth - sideLength * Config.cols) / 2;
-        } else {
+        } else { // vertical offset
             offsetY = (minefieldHeight - sideLength * Config.rows) / 2;
         }
 
+        // Place the spotviews
         for(int r = 0; r < Config.rows; r++) {
             for(int c = 0; c < Config.cols; c++) {
-                SpotView spot = new SpotView(this, sideLength, x + offsetX, y + offsetY);
-                minefield.addView(spot);
+                SpotView spotView = new SpotView(this, sideLength, x + offsetX, y + offsetY);
+                minefield.addView(spotView);
+                connectSpot(spotView, r, c);
                 x += sideLength;
             }
             x = 0;

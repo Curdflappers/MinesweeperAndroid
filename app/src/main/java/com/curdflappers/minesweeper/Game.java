@@ -1,0 +1,124 @@
+package com.curdflappers.minesweeper;
+
+import android.content.Context;
+import android.view.View;
+
+import com.curdflappers.minesweeper.utils.Location;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Random;
+
+public class Game implements View.OnClickListener, View.OnLongClickListener {
+    private Spot[][] mSpots;
+    int mMines;
+    boolean mMinefieldPopulated;
+    Context mContext;
+    boolean sweepMode;
+
+    public Game(Context context) {
+        mSpots = new Spot[Config.rows][Config.cols];
+        mMines = Config.mines;
+        mMinefieldPopulated = false;
+        for (int r = 0; r < mSpots.length; r++) {
+            for (int c = 0; c < mSpots[r].length; c++) {
+                mSpots[r][c] = new Spot(this, r, c);
+            }
+        }
+        mContext = context;
+        sweepMode = true;
+    }
+
+    public Spot[][] getSpots() {
+        Spot[][] spots = new Spot[mSpots.length][mSpots[0].length];
+        for(int r = 0; r < mSpots.length; r++) {
+            spots[r] = mSpots[r].clone();
+        }
+        return spots;
+    }
+
+    @Override
+    public void onClick(View view) {
+        Spot s = ((SpotView)view).spot;
+        if(!mMinefieldPopulated) {
+            populateMinefield(s.getRow(), s.getCol());
+            mMinefieldPopulated = true;
+        }
+        if(sweepMode) {
+            s.sweep();
+        } else {
+            // flag mode
+        }
+    }
+
+    private void populateMinefield(int row, int col) {
+        // Place mines
+        ArrayList<Location> locations = new ArrayList<>();
+        for (int r = 0; r < mSpots.length; r++)
+            for (int c = 0; c < mSpots[r].length; c++)
+                if(!(r == row && c == col))
+                    locations.add(new Location(r, c));
+
+        Random random = new Random(new Date().getTime());
+        for(int i = 0; i < mMines; i++)
+        {
+            int index = random.nextInt(locations.size());
+            Location loc = locations.get(index);
+            mSpots[loc.row][loc.col].setAsMine();
+            locations.remove(index);
+        }
+
+        // Update neighbor count
+        for (int r = 0; r < mSpots.length; r++) {
+            for (int c = 0; c < mSpots[r].length; c++) {
+                mSpots[r][c].populate(neighboringMines(r, c));
+            }
+        }
+    }
+
+    private int neighboringMines(int row, int col) {
+        int count = 0;
+
+        for (int r = row - 1; r <= row + 1; r++) {
+            for (int c = col - 1; c <= col + 1; c++) {
+                if(!(r == row && c == col) && validLoc(r, c)
+                        && mSpots[r][c].getMine()) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    private boolean validLoc(int r, int c) {
+        return r >= 0 && r < mSpots.length
+                && c >=0 && c < mSpots[r].length;
+    }
+
+    @Override
+    public boolean onLongClick(View view) {
+        return true;
+    }
+
+    public void update(Spot spot) {
+        if(spot.getExploded()) {
+            gameOver();
+            return;
+        }
+        if(spot.getRevealed()) {
+            if(spot.getNeighboringMines() == 0) {
+                int row = spot.getRow(), col = spot.getCol();
+                for(int r = row - 1; r <= row + 1; r++) {
+                    for(int c = col - 1; c <= col + 1; c++) {
+                        if(!(r == row && c == col) && validLoc(r, c))
+                        mSpots[r][c].sweep();
+                    }
+                }
+            }
+        }
+    }
+
+    private void gameOver() {
+        // TODO: 2018-01-07 implement game over
+    }
+}
