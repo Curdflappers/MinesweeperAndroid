@@ -1,9 +1,9 @@
 package com.curdflappers.minesweeper;
 
 public class Config {
-    public static final int MAX_ROWS = 20;
-    public static final int MAX_COLS = 40;
-    public static int rows = 20, cols = 12, mines = 40;
+    private static final int MAX_ROWS = 20;
+    private static final int MAX_COLS = 40;
+    static int rows = 20, cols = 12, mines = 40;
 
     public boolean setRows(int r) {
         if(r < MAX_ROWS && r > 0
