@@ -55,6 +55,7 @@ public class GameActivity extends AppCompatActivity {
         view.spot = spot;
         spot.setView(view);
         view.setOnClickListener(game);
+        view.setOnLongClickListener(game);
     }
 
     private void showMineField() {

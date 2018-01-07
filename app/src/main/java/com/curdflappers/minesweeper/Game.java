@@ -102,7 +102,17 @@ public class Game implements View.OnClickListener, View.OnLongClickListener {
 
     @Override
     public boolean onLongClick(View view) {
-        // TODO: 2018-01-07 do opposite action of mode
+        if(gameOver) { return true; }
+        Spot s = ((SpotView)view).spot;
+        if(!mMinefieldPopulated) {
+            populateMinefield(s.getRow(), s.getCol());
+            mMinefieldPopulated = true;
+        }
+        if(sweepMode) {
+            s.flag();
+        } else {
+            s.sweep();
+        }
         return true;
     }
 
