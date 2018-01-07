@@ -48,7 +48,9 @@ public class Game implements View.OnClickListener, View.OnLongClickListener {
 
     @Override
     public boolean onLongClick(View view) {
-        doAction(((SpotView)view).spot, !sweepMode);
+        if(gameOver) reset();
+        else doAction(((SpotView)view).spot, !sweepMode);
+
         vibrate();
         return true;
     }
