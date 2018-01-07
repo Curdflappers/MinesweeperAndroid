@@ -43,11 +43,31 @@ public class Game implements View.OnClickListener, View.OnLongClickListener {
 
     @Override
     public void onClick(View view) {
-        if(gameOver) { return; }
         doAction(((SpotView)view).spot, sweepMode);
     }
 
+    @Override
+    public boolean onLongClick(View view) {
+        doAction(((SpotView)view).spot, !sweepMode);
+        vibrate();
+        return true;
+    }
+
     private void doAction(Spot spot, boolean sweep) {
+        if(gameOver) { return; }
+
+        if(spot.getRevealed()
+                && neighboringFlags(spot) >= spot.getNeighboringMines()) {
+            int row = spot.getRow(), col = spot.getCol();
+            for (int r = row - 1; r <= row + 1; r++) {
+                for (int c = col - 1; c <= col + 1; c++) {
+                    if(!(r == row && c == col) && validLoc(r, c)) {
+                        mSpots[r][c].sweep();
+                    }
+                }
+            }
+        }
+
         if(sweep) {
             if(!mMinefieldPopulated) {
                 populateMinefield(spot.getRow(), spot.getCol());
@@ -58,15 +78,24 @@ public class Game implements View.OnClickListener, View.OnLongClickListener {
         }
     }
 
-    @Override
-    public boolean onLongClick(View view) {
-        if(gameOver) { return true; }
-        doAction(((SpotView)view).spot, !sweepMode);
-
+    private void vibrate() {
         Intent intentVibrate = new Intent(MinesweeperApp.getAppContext(),VibrateService.class);
         MinesweeperApp.getAppContext().startService(intentVibrate);
+    }
 
-        return true;
+    private int neighboringFlags(Spot spot) {
+        int row = spot.getRow(), col = spot.getCol();
+        int count = 0;
+
+        for (int r = row - 1; r <= row + 1; r++) {
+            for (int c = col - 1; c <= col + 1; c++) {
+                if(!(r == row && c == col) && validLoc(r, c)
+                        && mSpots[r][c].getFlagged()) {
+                    count++;
+                }
+            }
+        }
+        return count;
     }
 
     private void populateMinefield(int row, int col) {
