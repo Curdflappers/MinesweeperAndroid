@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Minesweeper</string>
+    <string name="spot">Spot</string>
+</resources>
