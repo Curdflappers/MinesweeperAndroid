@@ -10,8 +10,6 @@ import android.widget.RelativeLayout;
 public class GameActivity extends AppCompatActivity {
 
     RelativeLayout minefield;
-    private int rows = 20;
-    private int cols = 10;
     private int minefieldWidth, minefieldHeight;
 
     @Override
@@ -30,26 +28,25 @@ public class GameActivity extends AppCompatActivity {
                     minefield.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                     minefieldWidth = minefield.getWidth();
                     minefieldHeight = minefield.getHeight();
-                    fillMineField(rows, cols);
+                    fillMineField();
                 }
             });
         }
-
     }
 
-    private void fillMineField(int rows, int cols) {
+    private void fillMineField() {
         int x = 0, y = 0, offsetX = 0, offsetY = 0;
 
-        int sideLength = Math.min(minefieldWidth / cols, minefieldHeight / rows);
-        if(sideLength < minefieldWidth / cols) { // vertical empty space
+        int sideLength = Math.min(minefieldWidth / Config.cols, minefieldHeight / Config.rows);
+        if(sideLength < minefieldWidth / Config.cols) { // vertical empty space
             // horizontal offset
-            offsetX = (minefieldWidth - sideLength * cols) / 2;
+            offsetX = (minefieldWidth - sideLength * Config.cols) / 2;
         } else {
-            offsetY = (minefieldHeight - sideLength * rows) / 2;
+            offsetY = (minefieldHeight - sideLength * Config.rows) / 2;
         }
 
-        for(int r = 0; r < rows; r++) {
-            for(int c = 0; c < cols; c++) {
+        for(int r = 0; r < Config.rows; r++) {
+            for(int c = 0; c < Config.cols; c++) {
                 SpotView spot = new SpotView(this, sideLength, x + offsetX, y + offsetY);
                 minefield.addView(spot);
                 x += sideLength;
