@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.curdflappers.minesweeper.utils.Location;
+import com.curdflappers.minesweeper.utils.MinesweeperApp;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -15,11 +16,10 @@ public class Game implements View.OnClickListener, View.OnLongClickListener {
     private Spot[][] mSpots;
     int mMines;
     boolean mMinefieldPopulated;
-    Context mContext;
     boolean sweepMode;
     boolean gameOver;
 
-    public Game(Context context) {
+    public Game() {
         mSpots = new Spot[Config.rows][Config.cols];
         mMines = Config.mines;
         mMinefieldPopulated = false;
@@ -28,7 +28,6 @@ public class Game implements View.OnClickListener, View.OnLongClickListener {
                 mSpots[r][c] = new Spot(this, r, c);
             }
         }
-        mContext = context;
         sweepMode = true;
         gameOver = false;
     }
@@ -136,7 +135,7 @@ public class Game implements View.OnClickListener, View.OnLongClickListener {
 
     private void gameOver() {
         gameOver = true;
-        Toast.makeText(mContext, "Game over!", Toast.LENGTH_SHORT).show();
+        Toast.makeText(MinesweeperApp.getAppContext(), "Game over!", Toast.LENGTH_SHORT).show();
         for (Spot[] row : mSpots) {
             for (Spot spot : row) {
                 spot.reveal();
@@ -163,7 +162,7 @@ public class Game implements View.OnClickListener, View.OnLongClickListener {
     public void toggleMode() {
         if(gameOver) { return; }
         sweepMode = !sweepMode;
-        Toast.makeText(mContext,
+        Toast.makeText(MinesweeperApp.getAppContext(),
                 String.format("Now in %s mode", sweepMode ? "sweep" : "flag"),
                 Toast.LENGTH_SHORT).show();
     }

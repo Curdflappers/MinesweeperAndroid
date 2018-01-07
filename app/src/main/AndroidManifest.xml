@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.curdflappers.minesweeper">
 
-    <application
+    <application android:name="com.curdflappers.minesweeper.utils.MinesweeperApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"

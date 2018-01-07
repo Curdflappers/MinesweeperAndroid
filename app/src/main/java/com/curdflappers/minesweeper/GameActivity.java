@@ -20,7 +20,7 @@ public class GameActivity extends AppCompatActivity {
         setToFullScreen();
 
         minefield = findViewById(R.id.minefield);
-        game = new Game(this);
+        game = new Game();
 
         findViewById(R.id.restart_button).setOnClickListener(new View.OnClickListener() {
             @Override
