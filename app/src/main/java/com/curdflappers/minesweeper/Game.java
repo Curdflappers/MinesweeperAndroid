@@ -44,31 +44,24 @@ public class Game implements View.OnClickListener, View.OnLongClickListener {
     @Override
     public void onClick(View view) {
         if(gameOver) { return; }
-        Spot s = ((SpotView)view).spot;
-        if(!mMinefieldPopulated) {
-            populateMinefield(s.getRow(), s.getCol());
-            mMinefieldPopulated = true;
-        }
-        if(sweepMode) {
-            s.sweep();
+        doAction(((SpotView)view).spot, sweepMode);
+    }
+
+    private void doAction(Spot spot, boolean sweep) {
+        if(sweep) {
+            if(!mMinefieldPopulated) {
+                populateMinefield(spot.getRow(), spot.getCol());
+            }
+            spot.sweep();
         } else {
-            s.flag();
+            spot.flag();
         }
     }
 
     @Override
     public boolean onLongClick(View view) {
         if(gameOver) { return true; }
-        Spot s = ((SpotView)view).spot;
-        if(!mMinefieldPopulated) {
-            populateMinefield(s.getRow(), s.getCol());
-            mMinefieldPopulated = true;
-        }
-        if(sweepMode) {
-            s.flag();
-        } else {
-            s.sweep();
-        }
+        doAction(((SpotView)view).spot, !sweepMode);
 
         Intent intentVibrate = new Intent(MinesweeperApp.getAppContext(),VibrateService.class);
         MinesweeperApp.getAppContext().startService(intentVibrate);
@@ -99,6 +92,8 @@ public class Game implements View.OnClickListener, View.OnLongClickListener {
                 mSpots[r][c].populate(neighboringMines(r, c));
             }
         }
+
+        mMinefieldPopulated = true;
     }
 
     private int neighboringMines(int row, int col) {
