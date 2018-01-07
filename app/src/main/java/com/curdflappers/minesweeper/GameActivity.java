@@ -82,6 +82,12 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setToFullScreen();
+    }
+
     private void setToFullScreen()
     {
         ViewGroup rootLayout = findViewById(R.id.activity_game);
