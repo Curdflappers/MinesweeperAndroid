@@ -22,6 +22,13 @@ public class GameActivity extends AppCompatActivity {
         minefield = findViewById(R.id.minefield);
         game = new Game(this);
 
+        findViewById(R.id.restart_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                game.reset();
+            }
+        });
+
         ViewTreeObserver viewTreeObserver = minefield.getViewTreeObserver();
         if(viewTreeObserver.isAlive()) {
             viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {

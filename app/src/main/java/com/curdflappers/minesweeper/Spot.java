@@ -64,4 +64,12 @@ public class Spot {
         mGame.update(this);
         mView.update();
     }
+
+    public void reset() {
+        mFlagged = false;
+        mRevealed = false;
+        mExploded = false;
+        mMine = false;
+        mView.update();
+    }
 }

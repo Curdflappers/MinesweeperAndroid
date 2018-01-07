@@ -127,4 +127,13 @@ public class Game implements View.OnClickListener, View.OnLongClickListener {
             }
         }
     }
+
+    public void reset() {
+        mMinefieldPopulated = false;
+        for (Spot[] row : mSpots) {
+            for (Spot spot : row) {
+                spot.reset();
+            }
+        }
+    }
 }
