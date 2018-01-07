@@ -1,6 +1,6 @@
 package com.curdflappers.minesweeper;
 
-public class Spot {
+class Spot {
     private boolean mMine;
     private boolean mRevealed;
     private boolean mFlagged;
@@ -11,39 +11,37 @@ public class Spot {
     private Game mGame;
     private SpotView mView;
 
-    public Spot(Game game, int r, int c) {
+    Spot(Game game, int r, int c) {
         mGame = game;
         mRow = r;
         mCol = c;
     }
 
-    public boolean getMine() { return mMine; }
-    public boolean getRevealed() { return mRevealed; }
-    public boolean getFlagged() { return mFlagged; }
-    public boolean getExploded() { return mExploded; }
-    public int getNeighboringMines() { return mNeighboringMines; }
-    public int getRow() { return mRow; }
-    public int getCol() { return mCol; }
+    boolean getMine() { return mMine; }
+    boolean getRevealed() { return mRevealed; }
+    boolean getFlagged() { return mFlagged; }
+    boolean getExploded() { return mExploded; }
+    int getNeighboringMines() { return mNeighboringMines; }
+    int getRow() { return mRow; }
+    int getCol() { return mCol; }
 
-    public void setView(SpotView v) {
+    void setView(SpotView v) {
         mView = v;
     }
 
     /**
      * Can only become a mine before the field is fully populated
-     * @return
      */
-    public boolean setAsMine() {
-        if(mGame.mMinefieldPopulated) { return false; }
+    void setAsMine() {
+        if(mGame.mMinefieldPopulated) { return; }
         mMine = true;
-        return true;
     }
 
-    public void populate(int neighboringMines) {
+    void populate(int neighboringMines) {
         mNeighboringMines = neighboringMines;
     }
 
-    public void sweep() {
+    void sweep() {
         if(mFlagged || mRevealed) { return; }
 
         mRevealed = true;
@@ -54,7 +52,7 @@ public class Spot {
         updateState();
     }
 
-    public void reveal() {
+    void reveal() {
         mRevealed = true;
         mView.update();
         // do not update game logic here
@@ -65,7 +63,7 @@ public class Spot {
         mView.update();
     }
 
-    public void reset() {
+    void reset() {
         mFlagged = false;
         mRevealed = false;
         mExploded = false;
@@ -73,7 +71,7 @@ public class Spot {
         mView.update();
     }
 
-    public void flag() {
+    void flag() {
         if(mRevealed) { return; }
         mFlagged = !mFlagged;
         updateState();

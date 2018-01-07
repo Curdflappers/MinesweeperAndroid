@@ -1,7 +1,6 @@
 package com.curdflappers.minesweeper;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
 import android.view.View;
 import android.widget.Toast;
@@ -16,12 +15,12 @@ import java.util.Random;
 
 public class Game implements View.OnClickListener, View.OnLongClickListener {
     private Spot[][] mSpots;
-    int mMines;
+    private int mMines;
     boolean mMinefieldPopulated;
-    boolean sweepMode;
-    boolean gameOver;
+    private boolean sweepMode;
+    private boolean gameOver;
 
-    public Game() {
+    Game() {
         mSpots = new Spot[Config.rows][Config.cols];
         mMines = Config.mines;
         mMinefieldPopulated = false;
@@ -34,7 +33,7 @@ public class Game implements View.OnClickListener, View.OnLongClickListener {
         gameOver = false;
     }
 
-    public Spot[][] getSpots() {
+    Spot[][] getSpots() {
         Spot[][] spots = new Spot[mSpots.length][mSpots[0].length];
         for(int r = 0; r < mSpots.length; r++) {
             spots[r] = mSpots[r].clone();
@@ -121,7 +120,7 @@ public class Game implements View.OnClickListener, View.OnLongClickListener {
                 && c >=0 && c < mSpots[r].length;
     }
 
-    public void update(Spot spot) {
+    void update(Spot spot) {
         if(spot.getExploded()) {
             gameOver();
             return;
@@ -149,7 +148,7 @@ public class Game implements View.OnClickListener, View.OnLongClickListener {
         }
     }
 
-    public void reset() {
+    void reset() {
         gameOver = false;
         mMinefieldPopulated = false;
 
@@ -165,7 +164,7 @@ public class Game implements View.OnClickListener, View.OnLongClickListener {
     }
 
     @SuppressLint("DefaultLocale")
-    public void toggleMode() {
+    void toggleMode() {
         if(gameOver) { return; }
         sweepMode = !sweepMode;
         Toast.makeText(MinesweeperApp.getAppContext(),

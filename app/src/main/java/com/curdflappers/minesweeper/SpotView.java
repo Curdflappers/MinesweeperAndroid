@@ -7,10 +7,10 @@ import android.widget.RelativeLayout;
 public class SpotView extends AppCompatImageView {
     public Spot spot;
 
-    /**
-     * @param context
-     * @param sideLength in dp
-     */
+    public SpotView(Context context) {
+        this(context, 0, 0, 0);
+    }
+
     public SpotView(Context context, int sideLength, float x, float y) {
         super(context);
         setImageResource(R.drawable.unrevealed);
