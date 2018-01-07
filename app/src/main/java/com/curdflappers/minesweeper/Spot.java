@@ -74,6 +74,7 @@ public class Spot {
     }
 
     public void flag() {
+        if(mRevealed) { return; }
         mFlagged = !mFlagged;
         updateState();
     }
