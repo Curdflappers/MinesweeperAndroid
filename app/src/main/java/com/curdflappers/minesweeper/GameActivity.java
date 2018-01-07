@@ -1,10 +1,12 @@
 package com.curdflappers.minesweeper;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 public class GameActivity extends AppCompatActivity {
@@ -22,17 +24,28 @@ public class GameActivity extends AppCompatActivity {
         minefield = findViewById(R.id.minefield);
         game = new Game();
 
-        findViewById(R.id.restart_button).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.reset_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 game.reset();
             }
         });
 
-        findViewById(R.id.mode_button).setOnClickListener(new View.OnClickListener() {
+
+        final ImageView MODE_BUTTON = findViewById(R.id.mode_button);
+        MODE_BUTTON.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 game.toggleMode();
+                if(game.getSweepMode()) MODE_BUTTON.setImageResource(R.drawable.mine_icon);
+                else MODE_BUTTON.setImageResource(R.drawable.flag_icon);
+            }
+        });
+        findViewById(R.id.config_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(GameActivity.this, ConfigActivity.class);
+                startActivity(i);
             }
         });
 

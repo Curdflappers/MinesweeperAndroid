@@ -193,8 +193,9 @@ public class Game implements View.OnClickListener, View.OnLongClickListener {
     void toggleMode() {
         if(gameOver) { return; }
         sweepMode = !sweepMode;
-        Toast.makeText(MinesweeperApp.getAppContext(),
-                String.format("Now in %s mode", sweepMode ? "sweep" : "flag"),
-                Toast.LENGTH_SHORT).show();
+    }
+
+    public boolean getSweepMode() {
+        return sweepMode;
     }
 }

@@ -8,27 +8,60 @@
     tools:context="com.curdflappers.minesweeper.GameActivity"
     android:id="@+id/activity_game">
 
-    <LinearLayout
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/status_bar_height"
         android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/restart_button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Restart Game"
-            tools:ignore="HardcodedText" />
+        <ImageView
+            android:id="@+id/config_button"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="@dimen/image_padding"
+            android:layout_marginEnd="@dimen/image_padding"
+            android:layout_marginStart="@dimen/image_padding"
+            android:layout_marginTop="@dimen/image_padding"
+            android:contentDescription="@string/change_mode"
+            android:scaleType="fitCenter"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/reset_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/config_icon" />
 
-        <Button
+        <ImageView
+            android:id="@+id/reset_button"
+            android:layout_width="@dimen/status_bar_height"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="@dimen/image_padding"
+            android:layout_marginEnd="@dimen/image_padding"
+            android:layout_marginStart="@dimen/image_padding"
+            android:layout_marginTop="@dimen/image_padding"
+            android:contentDescription="@string/reset_game"
+            android:scaleType="fitCenter"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/mode_button"
+            app:layout_constraintStart_toEndOf="@+id/config_button"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/reset" />
+
+        <ImageView
             android:id="@+id/mode_button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Change Mode"
-            tools:ignore="HardcodedText" />
-    </LinearLayout>
+            android:layout_width="@dimen/status_bar_height"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="@dimen/image_padding"
+            android:layout_marginEnd="@dimen/image_padding"
+            android:layout_marginStart="@dimen/image_padding"
+            android:layout_marginTop="@dimen/image_padding"
+            android:contentDescription="@string/change_mode"
+            android:scaleType="fitCenter"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/reset_button"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0"
+            app:srcCompat="@drawable/mine_icon" />
+    </android.support.constraint.ConstraintLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
