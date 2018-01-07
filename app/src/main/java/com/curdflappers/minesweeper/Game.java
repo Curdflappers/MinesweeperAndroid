@@ -2,6 +2,7 @@ package com.curdflappers.minesweeper;
 
 import android.content.Context;
 import android.view.View;
+import android.widget.Toast;
 
 import com.curdflappers.minesweeper.utils.Location;
 
@@ -111,7 +112,7 @@ public class Game implements View.OnClickListener, View.OnLongClickListener {
                 for(int r = row - 1; r <= row + 1; r++) {
                     for(int c = col - 1; c <= col + 1; c++) {
                         if(!(r == row && c == col) && validLoc(r, c))
-                        mSpots[r][c].sweep();
+                            mSpots[r][c].sweep();
                     }
                 }
             }
@@ -119,6 +120,11 @@ public class Game implements View.OnClickListener, View.OnLongClickListener {
     }
 
     private void gameOver() {
-        // TODO: 2018-01-07 implement game over
+        Toast.makeText(mContext, "Game over!", Toast.LENGTH_SHORT).show();
+        for (Spot[] row : mSpots) {
+            for (Spot spot : row) {
+                spot.reveal();
+            }
+        }
     }
 }

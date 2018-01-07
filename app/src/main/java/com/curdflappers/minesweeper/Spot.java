@@ -17,8 +17,6 @@ public class Spot {
         mCol = c;
     }
 
-
-
     public boolean getMine() { return mMine; }
     public boolean getRevealed() { return mRevealed; }
     public boolean getFlagged() { return mFlagged; }
@@ -54,6 +52,12 @@ public class Spot {
         }
 
         updateState();
+    }
+
+    public void reveal() {
+        mRevealed = true;
+        mView.update();
+        // do not update game logic here
     }
 
     private void updateState() {

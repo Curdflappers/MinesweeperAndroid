@@ -22,45 +22,56 @@ public class SpotView extends AppCompatImageView {
     }
 
     public void update() {
-        if(spot.getExploded())
+        if(!spot.getRevealed() && !spot.getFlagged())
         {
-            setImageResource(R.drawable.exploded_mine);
+            setImageResource(R.drawable.unrevealed);
             return;
         }
-        if(spot.getRevealed()) {
-            if(spot.getFlagged() && !spot.getMine()) {
+
+        if(spot.getFlagged()) {
+            if(spot.getRevealed() && !spot.getMine())
                 setImageResource(R.drawable.false_flag);
-            }
-            switch(spot.getNeighboringMines()) {
-                case(0):
+            else
+                setImageResource(R.drawable.flag);
+            return;
+        }
+
+        // at this point the spot is definitely revealed and unflagged
+        if(spot.getMine())
+            if(spot.getExploded())
+                setImageResource(R.drawable.exploded_mine);
+            else
+                setImageResource(R.drawable.mine);
+        else {
+            switch (spot.getNeighboringMines()) {
+                case (0):
                     setImageResource(R.drawable.num_0);
                     break;
-                case(1):
+                case (1):
                     setImageResource(R.drawable.num_1);
                     break;
-                case(2):
+                case (2):
                     setImageResource(R.drawable.num_2);
                     break;
-                case(3):
+                case (3):
                     setImageResource(R.drawable.num_3);
                     break;
-                case(4):
+                case (4):
                     setImageResource(R.drawable.num_4);
                     break;
-                case(5):
+                case (5):
                     setImageResource(R.drawable.num_5);
                     break;
-                case(6):
+                case (6):
                     setImageResource(R.drawable.num_6);
                     break;
-                case(7):
+                case (7):
                     setImageResource(R.drawable.num_7);
                     break;
-                case(8):
+                case (8):
                     setImageResource(R.drawable.num_8);
                     break;
             }
-
         }
     }
 }
