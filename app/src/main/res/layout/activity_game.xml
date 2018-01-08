@@ -50,17 +50,30 @@
             android:layout_width="@dimen/status_bar_height"
             android:layout_height="match_parent"
             android:layout_marginBottom="@dimen/image_padding"
-            android:layout_marginEnd="@dimen/image_padding"
             android:layout_marginStart="@dimen/image_padding"
             android:layout_marginTop="@dimen/image_padding"
             android:contentDescription="@string/change_mode"
             android:scaleType="fitCenter"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/textView"
             app:layout_constraintStart_toEndOf="@+id/reset_button"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0"
             app:srcCompat="@drawable/mine_icon" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="00:00"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/mode_button"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="HardcodedText" />
     </android.support.constraint.ConstraintLayout>
 
     <RelativeLayout
