@@ -1,35 +1,40 @@
 package com.curdflappers.minesweeper;
 
-public class Config {
-    private static final int MAX_ROWS = 20;
-    private static final int MAX_COLS = 40;
+class Config {
+    static final int MAX_ROWS = 20;
+    static final int MAX_COLS = 40;
+    static final String INVALID_ENTRY = "Invalid entry, must be between 1 and %d, inclusive";
     static int rows = 20, cols = 12, mines = 40;
 
-    public boolean setRows(int r) {
-        if(r < MAX_ROWS && r > 0
-                && (cols > 1 || r > 1)
-                && r * cols > mines) {
+    static boolean setRows(int r) {
+        if(r <= MAX_ROWS && r > 0
+                && (cols > 1 || r > 1)) {
             rows = r;
+            mines = Math.min(mines, maxMines());
             return true;
         }
         return false;
     }
 
-    public boolean setCols(int c) {
-        if(c < MAX_COLS && c > 0
-                && (rows > 1 || c > 1)
-                && c * rows > mines) {
+    static boolean setCols(int c) {
+        if(c <= MAX_COLS && c > 0
+                && (rows > 1 || c > 1)) {
             cols = c;
+            mines = Math.min(mines, maxMines());
             return true;
         }
         return false;
     }
 
-    public boolean setMines(int m) {
-        if(m > 0 && m < rows * cols) {
+    static boolean setMines(int m) {
+        if(m > 0 && m <= maxMines()) {
             mines = m;
             return true;
         }
         return false;
+    }
+
+    static int maxMines() {
+        return rows * cols - 1;
     }
 }

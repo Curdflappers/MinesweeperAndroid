@@ -3,4 +3,7 @@
     <string name="spot">Spot</string>
     <string name="change_mode">Change mode</string>
     <string name="reset_game">Reset game</string>
+    <string name="columns">Columns:</string>
+    <string name="mines">Mines:</string>
+    <string name="rows">Rows:</string>
 </resources>
