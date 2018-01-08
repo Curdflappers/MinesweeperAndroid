@@ -1,6 +1,8 @@
 package com.curdflappers.minesweeper;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -8,13 +10,32 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
+import android.widget.TextView;
+
+import java.util.Locale;
 
 public class GameActivity extends AppCompatActivity implements Game.TimerListener{
 
     RelativeLayout minefield;
     private int minefieldWidth, minefieldHeight;
     Game game;
+    Handler mHandler;
+    int mInterval = 250; // time delay to update timer (too long makes it skip)
+    long mStartTime = 0L;
+    private TextView mTimerView;
+    Runnable mTimerRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if(mStartTime == 0L) {
+                mStartTime = System.currentTimeMillis();
+            }
+            try {
+                updateTimer();
+            } finally {
+                mHandler.postDelayed(mTimerRunnable, mInterval);
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +46,9 @@ public class GameActivity extends AppCompatActivity implements Game.TimerListene
         minefield = findViewById(R.id.minefield);
         game = new Game();
         game.addTimerListener(this);
+
+        mHandler = new Handler();
+        mTimerView = findViewById(R.id.timer_view);
 
         findViewById(R.id.reset_button).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,6 +89,15 @@ public class GameActivity extends AppCompatActivity implements Game.TimerListene
         }
     }
 
+    void updateTimer() {
+        int millisElapsed = (int)(System.currentTimeMillis() - mStartTime);
+        int seconds = millisElapsed / 1000;
+        int minutes = seconds / 60;
+        seconds %= 60;
+        mTimerView.setText(String.format(Locale.getDefault(),
+                "%02d:%02d", minutes, seconds));
+    }
+
     private void connectSpot(SpotView view, int row, int col) {
         Spot spot = game.getSpots()[row][col];
         view.spot = spot;
@@ -103,6 +136,12 @@ public class GameActivity extends AppCompatActivity implements Game.TimerListene
         setToFullScreen();
     }
 
+    @Override
+    public void onDestroy() {
+
+        super.onDestroy();
+    }
+
     private void setToFullScreen()
     {
         ViewGroup rootLayout = findViewById(R.id.activity_game);
@@ -116,16 +155,18 @@ public class GameActivity extends AppCompatActivity implements Game.TimerListene
 
     @Override
     public void startTimer() {
-        Toast.makeText(this, "Timer started", Toast.LENGTH_SHORT).show();
+        mTimerRunnable.run();
     }
 
     @Override
     public void stopTimer() {
-        Toast.makeText(this, "Timer stopped", Toast.LENGTH_SHORT).show();
+        mHandler.removeCallbacks(mTimerRunnable);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void resetTimer() {
-        Toast.makeText(this, "Timer reset", Toast.LENGTH_SHORT).show();
+        mStartTime = 0L;
+        mTimerView.setText("00:00");
     }
 }
