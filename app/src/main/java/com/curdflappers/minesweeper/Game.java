@@ -19,6 +19,10 @@ public class Game implements View.OnClickListener, View.OnLongClickListener {
     boolean mMinefieldPopulated;
     private boolean sweepMode;
     private boolean gameOver;
+    private ArrayList<TimerListener> listeners;
+    private static final int TIMER_START = 0,
+            TIMER_STOP = 1,
+            TIMER_RESET = 2;
 
     Game() {
         mSpots = new Spot[Config.rows][Config.cols];
@@ -31,6 +35,7 @@ public class Game implements View.OnClickListener, View.OnLongClickListener {
         }
         sweepMode = true;
         gameOver = false;
+        listeners = new ArrayList<>();
     }
 
     Spot[][] getSpots() {
@@ -125,6 +130,7 @@ public class Game implements View.OnClickListener, View.OnLongClickListener {
         }
 
         mMinefieldPopulated = true;
+        notifyListeners(TIMER_START);
     }
 
     private int neighboringMines(int row, int col) {
@@ -172,6 +178,7 @@ public class Game implements View.OnClickListener, View.OnLongClickListener {
                 spot.reveal();
             }
         }
+        notifyListeners(TIMER_STOP);
     }
 
     void reset() {
@@ -187,6 +194,7 @@ public class Game implements View.OnClickListener, View.OnLongClickListener {
         // Games start in sweep mode
         if(!sweepMode)
             toggleMode();
+        notifyListeners(TIMER_RESET);
     }
 
     @SuppressLint("DefaultLocale")
@@ -195,7 +203,34 @@ public class Game implements View.OnClickListener, View.OnLongClickListener {
         sweepMode = !sweepMode;
     }
 
-    public boolean getSweepMode() {
+    boolean getSweepMode() {
         return sweepMode;
+    }
+
+    void addTimerListener(TimerListener listener) {
+        listeners.add(listener);
+    }
+
+    private void notifyListeners(int timerState) {
+        for (TimerListener listener :
+                listeners) {
+            switch(timerState) {
+                case(TIMER_START):
+                    listener.startTimer();
+                    break;
+                case (TIMER_STOP):
+                    listener.stopTimer();
+                    break;
+                case (TIMER_RESET):
+                    listener.resetTimer();
+                    break;
+            }
+        }
+    }
+
+    interface TimerListener {
+         void startTimer();
+         void stopTimer();
+         void resetTimer();
     }
 }

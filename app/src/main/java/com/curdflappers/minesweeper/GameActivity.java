@@ -8,8 +8,9 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
-public class GameActivity extends AppCompatActivity {
+public class GameActivity extends AppCompatActivity implements Game.TimerListener{
 
     RelativeLayout minefield;
     private int minefieldWidth, minefieldHeight;
@@ -23,6 +24,7 @@ public class GameActivity extends AppCompatActivity {
 
         minefield = findViewById(R.id.minefield);
         game = new Game();
+        game.addTimerListener(this);
 
         findViewById(R.id.reset_button).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,5 +112,20 @@ public class GameActivity extends AppCompatActivity {
                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+    }
+
+    @Override
+    public void startTimer() {
+        Toast.makeText(this, "Timer started", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void stopTimer() {
+        Toast.makeText(this, "Timer stopped", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void resetTimer() {
+        Toast.makeText(this, "Timer reset", Toast.LENGTH_SHORT).show();
     }
 }
