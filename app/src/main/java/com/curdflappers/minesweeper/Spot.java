@@ -8,11 +8,13 @@ class Spot {
     private int mNeighboringMines;
     private int mRow;
     private int mCol;
-    private Game mGame;
     private SpotView mView;
+    private SpotListener listener;
+    static final int SWEPT = 0,
+        FLAGGED = 1;
 
-    Spot(Game game, int r, int c) {
-        mGame = game;
+    Spot(SpotListener listener, int r, int c) {
+        this.listener = listener;
         mRow = r;
         mCol = c;
     }
@@ -29,15 +31,11 @@ class Spot {
         mView = v;
     }
 
-    /**
-     * Can only become a mine before the field is fully populated
-     */
     void setAsMine() {
-        if(mGame.mMinefieldPopulated) { return; }
         mMine = true;
     }
 
-    void populate(int neighboringMines) {
+    void setNeighboringMines(int neighboringMines) {
         mNeighboringMines = neighboringMines;
     }
 
@@ -49,17 +47,11 @@ class Spot {
             mExploded = true;
         }
 
-        updateState();
+        updateState(SWEPT);
     }
 
     void reveal() {
         mRevealed = true;
-        mView.update();
-        // do not update game logic here
-    }
-
-    private void updateState() {
-        mGame.update(this);
         mView.update();
     }
 
@@ -74,6 +66,15 @@ class Spot {
     void flag() {
         if(mRevealed) { return; }
         mFlagged = !mFlagged;
-        updateState();
+        updateState(FLAGGED);
+    }
+
+    private void updateState(int action) {
+        listener.spotChanged(this, action);
+        mView.update();
+    }
+
+    interface SpotListener {
+        void spotChanged(Spot spot, int action);
     }
 }

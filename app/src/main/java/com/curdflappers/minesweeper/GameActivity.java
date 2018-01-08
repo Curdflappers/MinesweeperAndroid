@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import java.util.Locale;
 
-public class GameActivity extends AppCompatActivity implements Game.TimerListener{
+public class GameActivity extends AppCompatActivity implements Game.TimerListener, Game.MinesLeftListener{
 
     RelativeLayout minefield;
     private int minefieldWidth, minefieldHeight;
@@ -36,6 +36,7 @@ public class GameActivity extends AppCompatActivity implements Game.TimerListene
             }
         }
     };
+    private TextView mMinesLeftView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,9 +47,12 @@ public class GameActivity extends AppCompatActivity implements Game.TimerListene
         minefield = findViewById(R.id.minefield);
         game = new Game();
         game.addTimerListener(this);
+        game.addMinesLeftListener(this);
 
         mHandler = new Handler();
         mTimerView = findViewById(R.id.timer_view);
+        mMinesLeftView = findViewById(R.id.mines_left_view);
+        mMinesLeftView.setText(String.valueOf(Config.mines));
 
         findViewById(R.id.reset_button).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -168,5 +172,10 @@ public class GameActivity extends AppCompatActivity implements Game.TimerListene
     public void resetTimer() {
         mStartTime = 0L;
         mTimerView.setText("00:00");
+    }
+
+    @Override
+    public void minesLeftChanged(int minesLeft) {
+        mMinesLeftView.setText(String.valueOf(Math.max(0, minesLeft)));
     }
 }

@@ -13,13 +13,21 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Random;
 
-public class Game implements View.OnClickListener, View.OnLongClickListener {
+public class Game implements View.OnClickListener, View.OnLongClickListener, Spot.SpotListener {
     private Spot[][] mSpots;
     private int mMines;
     boolean mMinefieldPopulated;
     private boolean sweepMode;
     private boolean gameOver;
-    private ArrayList<TimerListener> listeners;
+    private ArrayList<TimerListener> timerListeners;
+    private ArrayList<MinesLeftListener> minesLeftListeners;
+    private int mMinesLeft;
+
+    private void setMinesLeft(int count) {
+        mMinesLeft = count;
+        notifyMinesLeftListeners();
+    }
+
     private static final int TIMER_START = 0,
             TIMER_STOP = 1,
             TIMER_RESET = 2;
@@ -35,7 +43,9 @@ public class Game implements View.OnClickListener, View.OnLongClickListener {
         }
         sweepMode = true;
         gameOver = false;
-        listeners = new ArrayList<>();
+        timerListeners = new ArrayList<>();
+        minesLeftListeners = new ArrayList<>();
+        setMinesLeft(Config.mines);
     }
 
     Spot[][] getSpots() {
@@ -125,12 +135,12 @@ public class Game implements View.OnClickListener, View.OnLongClickListener {
         // Update neighbor count
         for (int r = 0; r < mSpots.length; r++) {
             for (int c = 0; c < mSpots[r].length; c++) {
-                mSpots[r][c].populate(neighboringMines(r, c));
+                mSpots[r][c].setNeighboringMines(neighboringMines(r, c));
             }
         }
 
         mMinefieldPopulated = true;
-        notifyListeners(TIMER_START);
+        notifyTimerListeners(TIMER_START);
     }
 
     private int neighboringMines(int row, int col) {
@@ -152,21 +162,27 @@ public class Game implements View.OnClickListener, View.OnLongClickListener {
                 && c >=0 && c < mSpots[r].length;
     }
 
-    void update(Spot spot) {
+    public void spotChanged(Spot spot, int action) {
         if(spot.getExploded()) {
             gameOver();
             return;
         }
-        if(spot.getRevealed()) {
-            if(spot.getNeighboringMines() == 0) {
-                int row = spot.getRow(), col = spot.getCol();
-                for(int r = row - 1; r <= row + 1; r++) {
-                    for(int c = col - 1; c <= col + 1; c++) {
-                        if(!(r == row && c == col) && validLoc(r, c))
-                            mSpots[r][c].sweep();
+
+        switch(action) {
+            case Spot.SWEPT:
+                if(spot.getNeighboringMines() == 0) {
+                    int row = spot.getRow(), col = spot.getCol();
+                    for(int r = row - 1; r <= row + 1; r++) {
+                        for(int c = col - 1; c <= col + 1; c++) {
+                            if(!(r == row && c == col) && validLoc(r, c))
+                                mSpots[r][c].sweep();
+                        }
                     }
                 }
-            }
+                break;
+            case Spot.FLAGGED:
+                setMinesLeft(mMinesLeft + (spot.getFlagged() ? -1 : 1));
+                break;
         }
     }
 
@@ -178,7 +194,7 @@ public class Game implements View.OnClickListener, View.OnLongClickListener {
                 spot.reveal();
             }
         }
-        notifyListeners(TIMER_STOP);
+        notifyTimerListeners(TIMER_STOP);
     }
 
     void reset() {
@@ -194,7 +210,8 @@ public class Game implements View.OnClickListener, View.OnLongClickListener {
         // Games start in sweep mode
         if(!sweepMode)
             toggleMode();
-        notifyListeners(TIMER_RESET);
+        notifyTimerListeners(TIMER_RESET);
+        setMinesLeft(mMines);
     }
 
     @SuppressLint("DefaultLocale")
@@ -208,12 +225,11 @@ public class Game implements View.OnClickListener, View.OnLongClickListener {
     }
 
     void addTimerListener(TimerListener listener) {
-        listeners.add(listener);
+        timerListeners.add(listener);
     }
 
-    private void notifyListeners(int timerState) {
-        for (TimerListener listener :
-                listeners) {
+    private void notifyTimerListeners(int timerState) {
+        for (TimerListener listener : timerListeners) {
             switch(timerState) {
                 case(TIMER_START):
                     listener.startTimer();
@@ -232,5 +248,19 @@ public class Game implements View.OnClickListener, View.OnLongClickListener {
          void startTimer();
          void stopTimer();
          void resetTimer();
+    }
+
+    void addMinesLeftListener(MinesLeftListener listener) {
+        minesLeftListeners.add(listener);
+    }
+
+    private void notifyMinesLeftListeners() {
+        for (MinesLeftListener listener : minesLeftListeners) {
+            listener.minesLeftChanged(mMinesLeft);
+        }
+    }
+
+    interface MinesLeftListener {
+        void minesLeftChanged(int minesLeft);
     }
 }
