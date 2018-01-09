@@ -14,7 +14,8 @@ import android.widget.TextView;
 
 import java.util.Locale;
 
-public class GameActivity extends AppCompatActivity implements Game.TimerListener, Game.MinesLeftListener{
+public class GameActivity extends AppCompatActivity
+        implements Game.TimerListener, Game.MinesLeftListener {
 
     RelativeLayout minefield;
     private int minefieldWidth, minefieldHeight;
@@ -26,7 +27,7 @@ public class GameActivity extends AppCompatActivity implements Game.TimerListene
     Runnable mTimerRunnable = new Runnable() {
         @Override
         public void run() {
-            if(mStartTime == 0L) {
+            if (mStartTime == 0L) {
                 mStartTime = System.currentTimeMillis();
             }
             try {
@@ -54,12 +55,13 @@ public class GameActivity extends AppCompatActivity implements Game.TimerListene
         mMinesLeftView = findViewById(R.id.mines_left_view);
         mMinesLeftView.setText(String.valueOf(Config.getMines()));
 
-        findViewById(R.id.reset_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                game.reset();
-            }
-        });
+        findViewById(R.id.reset_button).setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        game.reset();
+                    }
+                });
 
 
         final ImageView MODE_BUTTON = findViewById(R.id.mode_button);
@@ -67,34 +69,39 @@ public class GameActivity extends AppCompatActivity implements Game.TimerListene
             @Override
             public void onClick(View view) {
                 game.toggleMode();
-                if(game.getSweepMode()) MODE_BUTTON.setImageResource(R.drawable.mine_icon);
+                if (game.getSweepMode())
+                    MODE_BUTTON.setImageResource(R.drawable.mine_icon);
                 else MODE_BUTTON.setImageResource(R.drawable.flag_icon);
             }
         });
-        findViewById(R.id.config_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent i = new Intent(GameActivity.this, ConfigActivity.class);
-                startActivity(i);
-            }
-        });
+        findViewById(R.id.config_button).setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent i = new Intent(
+                                GameActivity.this, ConfigActivity.class);
+                        startActivity(i);
+                    }
+                });
 
         ViewTreeObserver viewTreeObserver = minefield.getViewTreeObserver();
-        if(viewTreeObserver.isAlive()) {
-            viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                @Override
-                public void onGlobalLayout() {
-                    minefield.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                    minefieldWidth = minefield.getWidth();
-                    minefieldHeight = minefield.getHeight();
-                    showMineField();
-                }
-            });
+        if (viewTreeObserver.isAlive()) {
+            viewTreeObserver.addOnGlobalLayoutListener(
+                    new ViewTreeObserver.OnGlobalLayoutListener() {
+                        @Override
+                        public void onGlobalLayout() {
+                            minefield.getViewTreeObserver().
+                                    removeOnGlobalLayoutListener(this);
+                            minefieldWidth = minefield.getWidth();
+                            minefieldHeight = minefield.getHeight();
+                            showMineField();
+                        }
+                    });
         }
     }
 
     void updateTimer() {
-        int millisElapsed = (int)(System.currentTimeMillis() - mStartTime);
+        int millisElapsed = (int) (System.currentTimeMillis() - mStartTime);
         int seconds = millisElapsed / 1000;
         int minutes = seconds / 60;
         seconds %= 60;
@@ -115,17 +122,19 @@ public class GameActivity extends AppCompatActivity implements Game.TimerListene
         int rows = Config.getRows(), cols = Config.getCols();
 
         // Set up visual formatting
-        int sideLength = Math.min(minefieldWidth / cols, minefieldHeight / rows);
-        if(sideLength < minefieldWidth / cols) { // horizontal offset
+        int sideLength =
+                Math.min(minefieldWidth / cols, minefieldHeight / rows);
+        if (sideLength < minefieldWidth / cols) { // horizontal offset
             offsetX = (minefieldWidth - sideLength * cols) / 2;
         } else { // vertical offset
             offsetY = (minefieldHeight - sideLength * rows) / 2;
         }
 
         // Place the spotviews
-        for(int r = 0; r < rows; r++) {
-            for(int c = 0; c < cols; c++) {
-                SpotView spotView = new SpotView(this, sideLength, x + offsetX, y + offsetY);
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < cols; c++) {
+                SpotView spotView = new SpotView(
+                        this, sideLength, x + offsetX, y + offsetY);
                 minefield.addView(spotView);
                 connectSpot(spotView, r, c);
                 x += sideLength;
@@ -147,8 +156,7 @@ public class GameActivity extends AppCompatActivity implements Game.TimerListene
         super.onDestroy();
     }
 
-    private void setToFullScreen()
-    {
+    private void setToFullScreen() {
         ViewGroup rootLayout = findViewById(R.id.activity_game);
         rootLayout.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
                 | View.SYSTEM_UI_FLAG_FULLSCREEN
