@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.view.View;
 import android.widget.Toast;
 
-import com.curdflappers.minesweeper.utils.Location;
 import com.curdflappers.minesweeper.utils.MinesweeperApp;
 import com.curdflappers.minesweeper.utils.VibrateService;
 
@@ -71,18 +70,11 @@ public class Game implements View.OnClickListener, View.OnLongClickListener, Spo
     }
 
     private void doAction(Spot spot, boolean sweep) {
-        if(gameOver) { return; }
+        if(gameOver) return;
 
-        if(spot.getRevealed()
-                && neighboringFlags(spot) >= spot.getNeighboringMines()) {
-            int row = spot.getRow(), col = spot.getCol();
-            for (int r = row - 1; r <= row + 1; r++) {
-                for (int c = col - 1; c <= col + 1; c++) {
-                    if(!(r == row && c == col) && validLoc(r, c)) {
-                        mSpots[r][c].sweep();
-                    }
-                }
-            }
+        if(spot.getRevealed()) {
+            revealNeighborsIfSafe(spot);
+            return;
         }
 
         if(sweep) {
@@ -92,6 +84,19 @@ public class Game implements View.OnClickListener, View.OnLongClickListener, Spo
             spot.sweep();
         } else {
             spot.flag();
+        }
+    }
+
+    private void revealNeighborsIfSafe(Spot spot) {
+        if(neighboringFlags(spot) >= spot.getNeighboringMines()) {
+            int row = spot.getRow(), col = spot.getCol();
+            for (int r = row - 1; r <= row + 1; r++) {
+                for (int c = col - 1; c <= col + 1; c++) {
+                    if(!(r == row && c == col) && validLoc(r, c)) {
+                        mSpots[r][c].sweep();
+                    }
+                }
+            }
         }
     }
 
@@ -116,20 +121,20 @@ public class Game implements View.OnClickListener, View.OnLongClickListener, Spo
     }
 
     private void populateMinefield(int row, int col) {
-        // Place mines
-        ArrayList<Location> locations = new ArrayList<>();
+        // Get list of viable mine spots (all except pressed spot)
+        ArrayList<Spot> spots = new ArrayList<>();
         for (int r = 0; r < mSpots.length; r++)
             for (int c = 0; c < mSpots[r].length; c++)
                 if(!(r == row && c == col))
-                    locations.add(new Location(r, c));
+                    spots.add(mSpots[r][c]);
 
+        // Place mines
         Random random = new Random(new Date().getTime());
         for(int i = 0; i < mMines; i++)
         {
-            int index = random.nextInt(locations.size());
-            Location loc = locations.get(index);
-            mSpots[loc.row][loc.col].setAsMine();
-            locations.remove(index);
+            int index = random.nextInt(spots.size());
+            spots.get(index).setAsMine();
+            spots.remove(index);
         }
 
         // Update neighbor count
