@@ -143,7 +143,7 @@ public class GameActivity extends AppCompatActivity implements Game.TimerListene
 
     @Override
     public void onDestroy() {
-
+        mHandler.removeCallbacks(mTimerRunnable);
         super.onDestroy();
     }
 
