@@ -87,6 +87,7 @@ public class ConfigActivity extends AppCompatActivity
     @Override
     public void backButtonPressed(ConfigEditText edit) {
         edit.setText(String.valueOf(Config.getField(edit.getField())));
+        findViewById(R.id.activity_config).requestFocus();
         setToFullScreen();
     }
 }
