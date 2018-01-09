@@ -4,13 +4,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.curdflappers.minesweeper.utils.ConfigEditText;
-import com.curdflappers.minesweeper.utils.ConfigEditorActionListener;
-import com.curdflappers.minesweeper.utils.ConfigFocusChangeListener;
 
 import java.util.Locale;
 
@@ -50,8 +51,28 @@ public class ConfigActivity extends AppCompatActivity
     }
 
     private void setListeners(ConfigEditText edit, int field) {
-        edit.setOnEditorActionListener(new ConfigEditorActionListener());
-        edit.setOnFocusChangeListener(new ConfigFocusChangeListener());
+        edit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i,
+                                          KeyEvent keyEvent) {
+                if (i == textView.getImeOptions()) {
+                    ConfigEditText edit = (ConfigEditText) textView;
+                    boolean success = edit.setField();
+                    if (success && i == EditorInfo.IME_ACTION_DONE)
+                        edit.notifyListener(ConfigEditText.HIDE_KEYBOARD);
+                    return !success; // handles failures only
+                }
+                return false;
+            }
+        });
+        edit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                if(!b) {
+                    ((ConfigEditText)view).setField();
+                }
+            }
+        });
         edit.setConfigBackListener(this);
         edit.setField(field);
     }
