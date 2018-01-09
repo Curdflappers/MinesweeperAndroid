@@ -32,8 +32,8 @@ public class Game implements View.OnClickListener, View.OnLongClickListener, Spo
             TIMER_RESET = 2;
 
     Game() {
-        mSpots = new Spot[Config.rows][Config.cols];
-        mMines = Config.mines;
+        mSpots = new Spot[Config.getRows()][Config.getCols()];
+        mMines = Config.getMines();
         mMinefieldPopulated = false;
         for (int r = 0; r < mSpots.length; r++) {
             for (int c = 0; c < mSpots[r].length; c++) {
@@ -44,7 +44,7 @@ public class Game implements View.OnClickListener, View.OnLongClickListener, Spo
         gameOver = false;
         timerListeners = new ArrayList<>();
         minesLeftListeners = new ArrayList<>();
-        setMinesLeft(Config.mines);
+        setMinesLeft(Config.getMines());
     }
 
     Spot[][] getSpots() {

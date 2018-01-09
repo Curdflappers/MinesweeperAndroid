@@ -52,7 +52,7 @@ public class GameActivity extends AppCompatActivity implements Game.TimerListene
         mHandler = new Handler();
         mTimerView = findViewById(R.id.timer_view);
         mMinesLeftView = findViewById(R.id.mines_left_view);
-        mMinesLeftView.setText(String.valueOf(Config.mines));
+        mMinesLeftView.setText(String.valueOf(Config.getMines()));
 
         findViewById(R.id.reset_button).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -112,18 +112,19 @@ public class GameActivity extends AppCompatActivity implements Game.TimerListene
 
     private void showMineField() {
         int x = 0, y = 0, offsetX = 0, offsetY = 0;
+        int rows = Config.getRows(), cols = Config.getCols();
 
         // Set up visual formatting
-        int sideLength = Math.min(minefieldWidth / Config.cols, minefieldHeight / Config.rows);
-        if(sideLength < minefieldWidth / Config.cols) { // horizontal offset
-            offsetX = (minefieldWidth - sideLength * Config.cols) / 2;
+        int sideLength = Math.min(minefieldWidth / cols, minefieldHeight / rows);
+        if(sideLength < minefieldWidth / cols) { // horizontal offset
+            offsetX = (minefieldWidth - sideLength * cols) / 2;
         } else { // vertical offset
-            offsetY = (minefieldHeight - sideLength * Config.rows) / 2;
+            offsetY = (minefieldHeight - sideLength * rows) / 2;
         }
 
         // Place the spotviews
-        for(int r = 0; r < Config.rows; r++) {
-            for(int c = 0; c < Config.cols; c++) {
+        for(int r = 0; r < rows; r++) {
+            for(int c = 0; c < cols; c++) {
                 SpotView spotView = new SpotView(this, sideLength, x + offsetX, y + offsetY);
                 minefield.addView(spotView);
                 connectSpot(spotView, r, c);

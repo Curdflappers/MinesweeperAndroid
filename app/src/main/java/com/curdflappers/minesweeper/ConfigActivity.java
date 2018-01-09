@@ -4,19 +4,23 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.Toast;
 
-import java.util.Locale;
+import com.curdflappers.minesweeper.utils.ConfigEditText;
+import com.curdflappers.minesweeper.utils.ConfigEditorActionListener;
+import com.curdflappers.minesweeper.utils.ConfigFocusChangeListener;
 
-public class ConfigActivity extends AppCompatActivity {
+public class ConfigActivity extends AppCompatActivity
+        implements Config.ConfigListener, ConfigEditText.ConfigBackListener {
+
+    ConfigEditText rowsEdit, colsEdit, minesEdit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_config);
         setToFullScreen();
-        findViewById(R.id.play_button).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.play_button).setOnClickListener(
+                new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent i = new Intent(ConfigActivity.this, GameActivity.class);
@@ -24,65 +28,28 @@ public class ConfigActivity extends AppCompatActivity {
             }
         });
 
-        final EditText rowsEdit = findViewById(R.id.rows_edit);
-        rowsEdit.setText(String.valueOf(Config.rows));
-        rowsEdit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean b) {
-                if(!b) {
-                    int newRows =
-                            Integer.parseInt(rowsEdit.getText().toString());
-                    boolean success = Config.setRows(newRows);
-                    if(!success) {
-                        Toast.makeText(ConfigActivity.this,
-                                String.format(Locale.getDefault(), Config.INVALID_ENTRY, Config.MAX_ROWS),
-                                Toast.LENGTH_SHORT).show();
-                        rowsEdit.setText(String.valueOf(Config.rows));
-                    }
-                    ConfigActivity.this.setToFullScreen();
-                }
-            }
-        });
+        Config.setListener(this);
 
-        final EditText colsEdit = findViewById(R.id.columns_edit);
-        colsEdit.setText(String.valueOf(Config.cols));
-        colsEdit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean b) {
-                if(!b) {
-                    int newCols =
-                            Integer.parseInt(colsEdit.getText().toString());
-                    boolean success = Config.setCols(newCols);
-                    if(!success) {
-                        Toast.makeText(ConfigActivity.this,
-                                String.format(Locale.getDefault(), Config.INVALID_ENTRY, Config.MAX_COLS),
-                                Toast.LENGTH_SHORT).show();
-                        colsEdit.setText(String.valueOf(Config.cols));
-                    }
-                    ConfigActivity.this.setToFullScreen();
-                }
-            }
-        });
+        rowsEdit = findViewById(R.id.rows_edit);
+        rowsEdit.setText(String.valueOf(Config.getRows()));
+        setListeners(rowsEdit, Config.ROWS);
 
-        final EditText minesEdit = findViewById(R.id.mines_edit);
-        minesEdit.setText(String.valueOf(Config.mines));
-        minesEdit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean b) {
-                if(!b) {
-                    int newMines =
-                            Integer.parseInt(minesEdit.getText().toString());
-                    boolean success = Config.setMines(newMines);
-                    if(!success) {
-                        Toast.makeText(ConfigActivity.this,
-                                String.format(Locale.getDefault(), Config.INVALID_ENTRY, Config.maxMines()),
-                                Toast.LENGTH_SHORT).show();
-                        minesEdit.setText(String.valueOf(Config.mines));
-                    }
-                    ConfigActivity.this.setToFullScreen();
-                }
-            }
-        });
+        colsEdit = findViewById(R.id.columns_edit);
+        colsEdit.setText(String.valueOf(Config.getCols()));
+        setListeners(colsEdit, Config.COLS);
+
+        minesEdit = findViewById(R.id.mines_edit);
+        minesEdit.setText(String.valueOf(Config.getMines()));
+        setListeners(minesEdit, Config.MINES);
+    }
+
+    private void setListeners(ConfigEditText edit, int field) {
+        edit.setOnEditorActionListener(
+                new ConfigEditorActionListener(this, field));
+        edit.setOnFocusChangeListener(
+                new ConfigFocusChangeListener(field));
+        edit.setConfigBackListener(this);
+        edit.setField(field);
     }
 
     @Override
@@ -91,7 +58,7 @@ public class ConfigActivity extends AppCompatActivity {
         setToFullScreen();
     }
 
-    private void setToFullScreen()
+    public void setToFullScreen()
     {
         findViewById(R.id.activity_config).setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_LOW_PROFILE
@@ -100,5 +67,26 @@ public class ConfigActivity extends AppCompatActivity {
                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+    }
+
+    @Override
+    public void rowsChanged(int rows) {
+        rowsEdit.setText(String.valueOf(rows));
+    }
+
+    @Override
+    public void colsChanged(int cols) {
+        colsEdit.setText(String.valueOf(cols));
+    }
+
+    @Override
+    public void minesChanged(int mines) {
+        minesEdit.setText(String.valueOf(mines));
+    }
+
+    @Override
+    public void backButtonPressed(ConfigEditText edit) {
+        edit.setText(String.valueOf(Config.getField(edit.getField())));
+        setToFullScreen();
     }
 }

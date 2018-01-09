@@ -1,40 +1,108 @@
 package com.curdflappers.minesweeper;
 
-class Config {
-    static final int MAX_ROWS = 20;
-    static final int MAX_COLS = 40;
-    static final String INVALID_ENTRY = "Invalid entry, must be between 1 and %d, inclusive";
-    static int rows = 20, cols = 12, mines = 40;
+public class Config {
+    private static final int MAX_ROWS = 20, MAX_COLS = 40;
+    public static final String INVALID_ENTRY =
+            "Invalid entry, must be between 1 and %d, inclusive";
+    private static int rows = 20, cols = 12, mines = 40;
+    static final int ROWS = 0, COLS = 1, MINES = 2;
+    private static ConfigListener listener;
 
-    static boolean setRows(int r) {
+    static int getRows() { return rows; }
+    static int getCols() { return cols; }
+    static int getMines() { return mines; }
+
+    private static boolean setRows(int r) {
         if(r <= MAX_ROWS && r > 0
                 && (cols > 1 || r > 1)) {
             rows = r;
-            mines = Math.min(mines, maxMines());
+            setMines(Math.min(mines, maxMines()));
+            notifyListener(ROWS, rows);
             return true;
         }
         return false;
     }
 
-    static boolean setCols(int c) {
+    private static boolean setCols(int c) {
         if(c <= MAX_COLS && c > 0
                 && (rows > 1 || c > 1)) {
             cols = c;
-            mines = Math.min(mines, maxMines());
+            setMines(Math.min(mines, maxMines()));
+            notifyListener(COLS, cols);
             return true;
         }
         return false;
     }
 
-    static boolean setMines(int m) {
+    private static boolean setMines(int m) {
         if(m > 0 && m <= maxMines()) {
             mines = m;
+            notifyListener(MINES, mines);
             return true;
         }
         return false;
     }
 
-    static int maxMines() {
+    private static int maxMines() {
         return rows * cols - 1;
+    }
+
+    static void setListener(ConfigListener l) { listener = l; }
+
+    private static void notifyListener(int field, int value) {
+        if (listener == null) return;
+        switch(field) {
+            case ROWS:
+                listener.rowsChanged(value);
+                break;
+            case COLS:
+                listener.colsChanged(value);
+                break;
+            case MINES:
+                listener.minesChanged(value);
+                break;
+        }
+    }
+
+    public static int getField(int field) {
+        switch(field) {
+            case ROWS:
+                return getRows();
+            case COLS:
+                return getCols();
+            case MINES:
+                return getMines();
+        }
+        return -1;
+    }
+
+    public static boolean setField(int field, int value) {
+        switch(field) {
+            case Config.ROWS:
+                return Config.setRows(value);
+            case Config.COLS:
+                return Config.setCols(value);
+            case Config.MINES:
+                return Config.setMines(value);
+        }
+        return false;
+    }
+
+    public static int getMax(int field) {
+        switch (field) {
+            case Config.ROWS:
+                return Config.MAX_ROWS;
+            case Config.COLS:
+                return Config.MAX_COLS;
+            case Config.MINES:
+                return Config.maxMines();
+        }
+        return -1;
+    }
+
+    interface ConfigListener {
+        void rowsChanged(int rows);
+        void colsChanged(int cols);
+        void minesChanged(int mines);
     }
 }

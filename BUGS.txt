@@ -1,4 +1,4 @@
 0000: Rotating app resets activity
 
-0001: Config doesn't update upon pressing play, only when TextEdits lose focus
+0001 [RESOLVED]: Config doesn't update upon pressing play, only when TextEdits lose focus
 
