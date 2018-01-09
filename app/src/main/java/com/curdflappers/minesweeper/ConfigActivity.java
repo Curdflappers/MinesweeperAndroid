@@ -1,16 +1,22 @@
 package com.curdflappers.minesweeper;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Toast;
 
 import com.curdflappers.minesweeper.utils.ConfigEditText;
 import com.curdflappers.minesweeper.utils.ConfigEditorActionListener;
 import com.curdflappers.minesweeper.utils.ConfigFocusChangeListener;
 
+import java.util.Locale;
+
 public class ConfigActivity extends AppCompatActivity
-        implements Config.ConfigListener, ConfigEditText.ConfigBackListener {
+        implements Config.ConfigListener,
+        ConfigEditText.ConfigEditTextListener {
 
     ConfigEditText rowsEdit, colsEdit, minesEdit;
 
@@ -44,10 +50,8 @@ public class ConfigActivity extends AppCompatActivity
     }
 
     private void setListeners(ConfigEditText edit, int field) {
-        edit.setOnEditorActionListener(
-                new ConfigEditorActionListener(this, field));
-        edit.setOnFocusChangeListener(
-                new ConfigFocusChangeListener(field));
+        edit.setOnEditorActionListener(new ConfigEditorActionListener());
+        edit.setOnFocusChangeListener(new ConfigFocusChangeListener());
         edit.setConfigBackListener(this);
         edit.setField(field);
     }
@@ -85,9 +89,23 @@ public class ConfigActivity extends AppCompatActivity
     }
 
     @Override
-    public void backButtonPressed(ConfigEditText edit) {
+    public void hideKeyboard(ConfigEditText edit) {
         edit.setText(String.valueOf(Config.getField(edit.getField())));
         findViewById(R.id.activity_config).requestFocus();
+
+        InputMethodManager mgr = (InputMethodManager)
+                getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (mgr != null) mgr.hideSoftInputFromWindow(edit.getWindowToken(), 0);
+
         setToFullScreen();
+    }
+
+    @Override
+    public void setFieldFailure(ConfigEditText edit) {
+        Toast.makeText(this, String.format(Locale.getDefault(),
+                Config.INVALID_ENTRY, Config.getMax(edit.getField())),
+                Toast.LENGTH_LONG).show();
+        edit.setText(String.valueOf(Config.getField(edit.getField())));
+        edit.selectAll();
     }
 }

@@ -2,7 +2,7 @@ package com.curdflappers.minesweeper;
 
 public class Config {
     private static final int MAX_ROWS = 20, MAX_COLS = 40;
-    public static final String INVALID_ENTRY =
+    static final String INVALID_ENTRY =
             "Invalid entry, must be between 1 and %d, inclusive";
     private static int rows = 20, cols = 12, mines = 40;
     static final int ROWS = 0, COLS = 1, MINES = 2;
@@ -64,7 +64,7 @@ public class Config {
         }
     }
 
-    public static int getField(int field) {
+    static int getField(int field) {
         switch(field) {
             case ROWS:
                 return getRows();
@@ -88,7 +88,7 @@ public class Config {
         return false;
     }
 
-    public static int getMax(int field) {
+    static int getMax(int field) {
         switch (field) {
             case Config.ROWS:
                 return Config.MAX_ROWS;
