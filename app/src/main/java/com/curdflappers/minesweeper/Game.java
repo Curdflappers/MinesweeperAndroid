@@ -15,7 +15,7 @@ import java.util.Random;
 public class Game implements View.OnClickListener, View.OnLongClickListener, Spot.SpotListener {
     private Spot[][] mSpots;
     private int mMines;
-    boolean mMinefieldPopulated;
+    private boolean mMinefieldPopulated;
     private boolean sweepMode;
     private boolean gameOver;
     private ArrayList<TimerListener> timerListeners;
