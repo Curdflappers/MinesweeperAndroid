@@ -2,8 +2,10 @@ package com.curdflappers.minesweeper;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Point;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Display;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -21,6 +23,8 @@ public class ConfigActivity extends AppCompatActivity
 
     ConfigEditText rowsEdit, colsEdit, minesEdit;
     View mPlayButton, mActivity;
+    private static final float SIDE_PADDING_PCT = 0.2f,
+        TOP_PADDING_PCT = 0.05f;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +58,8 @@ public class ConfigActivity extends AppCompatActivity
         });
 
         mActivity.requestFocus();
+
+        setPadding();
     }
 
     private void setEdits() {
@@ -87,6 +93,17 @@ public class ConfigActivity extends AppCompatActivity
                 mActivity.requestFocus();
             }
         });
+    }
+
+    private void setPadding() {
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+        int height = size.y;
+        int paddingSide = (int)(SIDE_PADDING_PCT * width);
+        int paddingTop = (int)(TOP_PADDING_PCT * height);
+        mActivity.setPadding(paddingSide, paddingTop, paddingSide, 0);
     }
 
     private void setListeners(ConfigEditText edit, int field) {
