@@ -83,7 +83,7 @@ public class Game implements View.OnClickListener, View.OnLongClickListener,
                 populateMinefield(spot.getRow(), spot.getCol());
             }
             spot.sweep();
-        } else {
+        } else if (mMinesLeft > 0 || spot.getFlagged()){
             spot.flag();
         }
     }

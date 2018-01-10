@@ -181,6 +181,6 @@ public class GameActivity extends AppCompatActivity
 
     @Override
     public void minesLeftChanged(int minesLeft) {
-        mMinesLeftView.setText(String.valueOf(Math.max(0, minesLeft)));
+        mMinesLeftView.setText(minesLeft);
     }
 }
