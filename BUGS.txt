@@ -5,3 +5,5 @@
 0002 [RESOLVED]: Pressing Play in Config activity while an EditText has focus loads Game activity with transparent navigation bar
 
 0003 [RESOLVED]: Removing stylus shows opaque navigation bar that can only be hidden by loading new activity
+
+0004: Going from one EditText to another directly (focus on one, click on the other) disables ability to enter text on Pixel XL
