@@ -1,7 +1,7 @@
 package com.curdflappers.minesweeper;
 
 public class Config {
-    private static final int MAX_ROWS = 20, MAX_COLS = 40;
+    private static final int MAX_ROWS = 40, MAX_COLS = 20;
     static final String INVALID_ENTRY =
             "Invalid entry, must be between 1 and %d, inclusive";
     static final int BEGINNER = 0,

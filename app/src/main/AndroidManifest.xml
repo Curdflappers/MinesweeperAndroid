@@ -14,14 +14,16 @@
         android:theme="@style/AppTheme">
         <service android:name=".utils.VibrateService" />
 
-        <activity android:name=".GameActivity">
+        <activity android:name=".GameActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ConfigActivity"></activity>
+        <activity android:name=".ConfigActivity" />
     </application>
 
 </manifest>
