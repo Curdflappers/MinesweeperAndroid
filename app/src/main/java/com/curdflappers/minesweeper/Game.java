@@ -19,7 +19,7 @@ public class Game implements View.OnClickListener, View.OnLongClickListener,
     private boolean sweepMode;
     private boolean gameOver;
     private GameListener listener;
-    private int mMinesLeft;
+    private int mMinesLeft, mUnrevealedSpots;
 
 
     private static final int GAME_START = 0,
@@ -46,6 +46,7 @@ public class Game implements View.OnClickListener, View.OnLongClickListener,
         gameOver = false;
         this.listener = listener;
         setMinesLeft(Config.getMines());
+        mUnrevealedSpots = mSpots.length * mSpots[0].length;
     }
 
     Spot[][] getSpots() {
@@ -187,6 +188,10 @@ public class Game implements View.OnClickListener, View.OnLongClickListener,
                         }
                     }
                 }
+                mUnrevealedSpots--;
+                if (mUnrevealedSpots == mMines) {
+                    gameOver(true);
+                }
                 break;
             case Spot.FLAGGED:
                 boolean flagged = spot.getFlagged();
@@ -200,7 +205,12 @@ public class Game implements View.OnClickListener, View.OnLongClickListener,
         mWin = win;
         for (Spot[] row : mSpots) {
             for (Spot spot : row) {
-                spot.reveal();
+                if(!spot.getRevealed()) {
+                    if(win && !spot.getFlagged())
+                        spot.flag();
+                    else
+                        spot.reveal();
+                }
             }
         }
         notifyListener(GAME_OVER);
@@ -221,6 +231,7 @@ public class Game implements View.OnClickListener, View.OnLongClickListener,
             toggleMode();
         notifyListener(GAME_RESET);
         setMinesLeft(mMines);
+        mUnrevealedSpots = mSpots.length * mSpots[0].length;
     }
 
     @SuppressLint("DefaultLocale")
