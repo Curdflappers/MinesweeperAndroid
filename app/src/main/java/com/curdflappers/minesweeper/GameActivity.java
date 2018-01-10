@@ -95,6 +95,15 @@ public class GameActivity extends AppCompatActivity
                         }
                     });
         }
+
+        findViewById(R.id.activity_game).setOnSystemUiVisibilityChangeListener(
+                new View.OnSystemUiVisibilityChangeListener() {
+                    @Override
+                    public void onSystemUiVisibilityChange(int i) {
+                        setToFullScreen();
+                    }
+                }
+        );
     }
 
     void updateTimer() {

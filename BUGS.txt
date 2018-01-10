@@ -4,4 +4,4 @@
 
 0002 [RESOLVED]: Pressing Play in Config activity while an EditText has focus loads Game activity with transparent navigation bar
 
-0003: Removing stylus shows opaque navigation bar that can only be hidden by loading new activity
+0003 [RESOLVED]: Removing stylus shows opaque navigation bar that can only be hidden by loading new activity
