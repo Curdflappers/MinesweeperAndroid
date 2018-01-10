@@ -123,8 +123,8 @@ public class Config {
                 setMines(99);
                 break;
             case ENDURANCE:
-                setRows(20);
-                setCols(40);
+                setRows(40);
+                setCols(20);
                 setMines(160);
                 break;
         }
