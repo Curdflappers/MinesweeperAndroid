@@ -26,7 +26,8 @@ public class ConfigActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_config);
         setToFullScreen();
-        findViewById(R.id.play_button).setOnClickListener(
+        final View playButton = findViewById(R.id.play_button);
+        playButton.setOnClickListener(
                 new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -54,7 +55,27 @@ public class ConfigActivity extends AppCompatActivity
         activity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                findViewById(R.id.play_button).requestFocus();
+                playButton.requestFocus();
+            }
+        });
+
+        setPresetListeners();
+    }
+
+    private void setPresetListeners() {
+        setPresetListener(findViewById(R.id.beginner_button), Config.BEGINNER);
+        setPresetListener(
+                findViewById(R.id.intermediate_button), Config.INTERMEDIATE);
+        setPresetListener(findViewById(R.id.expert_button), Config.EXPERT);
+        setPresetListener(
+                findViewById(R.id.endurance_button), Config.ENDURANCE);
+    }
+
+    private void setPresetListener(View view, final int difficulty) {
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Config.setDifficulty(difficulty);
             }
         });
     }

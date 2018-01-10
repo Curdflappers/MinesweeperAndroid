@@ -4,6 +4,11 @@ public class Config {
     private static final int MAX_ROWS = 20, MAX_COLS = 40;
     static final String INVALID_ENTRY =
             "Invalid entry, must be between 1 and %d, inclusive";
+    static final int BEGINNER = 0,
+        INTERMEDIATE = 1,
+        EXPERT = 2,
+        ENDURANCE = 3;
+
     private static int rows = 20, cols = 12, mines = 40;
     static final int ROWS = 0, COLS = 1, MINES = 2;
     private static ConfigListener listener;
@@ -98,6 +103,31 @@ public class Config {
                 return Config.maxMines();
         }
         return -1;
+    }
+
+    static void setDifficulty(int difficulty) {
+        switch(difficulty) {
+            case BEGINNER:
+                setRows(9);
+                setCols(9);
+                setMines(10);
+                break;
+            case INTERMEDIATE:
+                setRows(16);
+                setCols(16);
+                setMines(40);
+                break;
+            case EXPERT:
+                setRows(16);
+                setCols(30);
+                setMines(99);
+                break;
+            case ENDURANCE:
+                setRows(20);
+                setCols(40);
+                setMines(160);
+                break;
+        }
     }
 
     interface ConfigListener {

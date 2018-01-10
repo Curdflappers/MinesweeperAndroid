@@ -7,4 +7,8 @@
     <string name="mines">Mines:</string>
     <string name="rows">Rows:</string>
     <string name="play">Play</string>
+    <string name="beginner">Beginner</string>
+    <string name="intermediate">Intermediate</string>
+    <string name="expert">Expert</string>
+    <string name="endurance">Endurance</string>
 </resources>
