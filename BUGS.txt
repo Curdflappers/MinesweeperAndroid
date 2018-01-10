@@ -7,3 +7,5 @@
 0003 [RESOLVED]: Removing stylus shows opaque navigation bar that can only be hidden by loading new activity
 
 0004: Going from one EditText to another directly (focus on one, click on the other) disables ability to enter text on Pixel XL
+
+0005: Clicking OK on high score dialog sometimes shows nav bar

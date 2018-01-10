@@ -13,6 +13,12 @@ public class Config {
             EXPERT = new Difficulty(16, 16, 99),
             ENDURANCE = new Difficulty(40, 24, 192);
 
+    public static final int CUSTOM = -1,
+            PRESET_BEGINNER = 0,
+            PRESET_INTERMEDIATE = 1,
+            PRESET_EXPERT = 2,
+            PRESET_ENDURANCE = 3;
+
     private static int rows = 20, cols = 12, mines = 40;
     static final int ROWS = 0, COLS = 1, MINES = 2;
     private static ConfigListener listener;
@@ -23,6 +29,20 @@ public class Config {
 
     static Difficulty getDifficulty() {
         return new Difficulty(getRows(), getCols(), getMines());
+    }
+    static int getPresetDifficulty() {
+        Difficulty difficulty = getDifficulty();
+        if (difficulty.equals(BEGINNER)) {
+            return PRESET_BEGINNER;
+        } else if (difficulty.equals(INTERMEDIATE)) {
+            return PRESET_INTERMEDIATE;
+        } else if (difficulty.equals(EXPERT)) {
+            return PRESET_EXPERT;
+        } else if (difficulty.equals(ENDURANCE)) {
+            return PRESET_ENDURANCE;
+        } else {
+            return CUSTOM;
+        }
     }
     static void setDifficulty(Difficulty difficulty) {
         setRows(difficulty.getRows());

@@ -12,6 +12,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.curdflappers.minesweeper.utils.HighScoreHelper;
+import com.curdflappers.minesweeper.utils.SimpleAlertDialog;
+
 import java.util.Locale;
 
 public class GameActivity extends AppCompatActivity
@@ -44,6 +47,7 @@ public class GameActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
         setToFullScreen();
+        HighScoreHelper.clearTopScores(this);
 
         minefield = findViewById(R.id.minefield);
         mHandler = new Handler();
@@ -106,12 +110,8 @@ public class GameActivity extends AppCompatActivity
     }
 
     void updateTimer() {
-        int millisElapsed = (int) (System.currentTimeMillis() - mStartTime);
-        int seconds = millisElapsed / 1000;
-        int minutes = seconds / 60;
-        seconds %= 60;
-        mTimerView.setText(String.format(Locale.getDefault(),
-                "%02d:%02d", minutes, seconds));
+        long millisElapsed = (int) (System.currentTimeMillis() - mStartTime);
+        mTimerView.setText(timeFormat((int)millisElapsed/1000));
     }
 
     private void connectSpot(SpotView view, int row, int col) {
@@ -196,9 +196,33 @@ public class GameActivity extends AppCompatActivity
 
     @Override
     public void gameOver(boolean win) {
+        stopTimer();
+        int score = (int)((System.currentTimeMillis() - mStartTime) / 1000);
         String msg = win ? "You win!" : "Game over!";
         Toast.makeText(this, msg,
                 Toast.LENGTH_SHORT).show();
-        stopTimer();
+        if(win) {
+            int diffCode = Config.getPresetDifficulty();
+            if (HighScoreHelper.isTopScore(this, score, diffCode)) {
+                HighScoreHelper.setTopScore(this, score, diffCode);
+
+
+
+                SimpleAlertDialog dialog = SimpleAlertDialog.newInstance(
+                        "New High Score!", String.format(
+                                Locale.getDefault(),
+                                "Your new high score is %s!",
+                                timeFormat(score)));
+                dialog.show(getSupportFragmentManager(), null);
+                setToFullScreen();
+            }
+        }
+    }
+
+    private String timeFormat(int seconds) {
+        int minutes = seconds/60;
+        seconds %= 60;
+        return String.format(Locale.getDefault(),
+                "%02d:%02d", minutes, seconds);
     }
 }
