@@ -79,12 +79,12 @@ public class ConfigActivity extends AppCompatActivity
     }
 
     private void setPresetButtons() {
-        setPresetListener(findViewById(R.id.beginner_button), Config.BEGINNER);
+        setPresetListener(findViewById(R.id.beginner_button), Config.BEGINNER_MODE);
         setPresetListener(
-                findViewById(R.id.intermediate_button), Config.INTERMEDIATE);
-        setPresetListener(findViewById(R.id.expert_button), Config.EXPERT);
+                findViewById(R.id.intermediate_button), Config.INTERMEDIATE_MODE);
+        setPresetListener(findViewById(R.id.expert_button), Config.EXPERT_MODE);
         setPresetListener(
-                findViewById(R.id.endurance_button), Config.ENDURANCE);
+                findViewById(R.id.endurance_button), Config.ENDURANCE_MODE);
     }
 
     private void setPresetListener(View view, final int difficulty) {

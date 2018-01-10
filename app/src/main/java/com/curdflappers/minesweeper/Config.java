@@ -1,13 +1,21 @@
 package com.curdflappers.minesweeper;
 
+import com.curdflappers.minesweeper.utils.Difficulty;
+
 public class Config {
     private static final int MAX_ROWS = 40, MAX_COLS = 24;
     static final String INVALID_ENTRY =
             "Invalid entry, must be between 1 and %d, inclusive";
-    static final int BEGINNER = 0,
-        INTERMEDIATE = 1,
-        EXPERT = 2,
-        ENDURANCE = 3;
+    static final int BEGINNER_MODE = 0,
+        INTERMEDIATE_MODE = 1,
+        EXPERT_MODE = 2,
+        ENDURANCE_MODE = 3;
+
+    static final Difficulty
+            BEGINNER = new Difficulty(9, 9, 10),
+            INTERMEDIATE = new Difficulty(16, 16, 40),
+            EXPERT = new Difficulty(16, 16, 99),
+            ENDURANCE = new Difficulty(40, 24, 192);
 
     private static int rows = 20, cols = 12, mines = 40;
     static final int ROWS = 0, COLS = 1, MINES = 2;
@@ -16,6 +24,16 @@ public class Config {
     static int getRows() { return rows; }
     static int getCols() { return cols; }
     static int getMines() { return mines; }
+
+    static Difficulty getDifficulty() {
+        return new Difficulty(getRows(), getCols(), getMines());
+    }
+
+    private static void setDifficulty(Difficulty difficulty) {
+        setRows(difficulty.getRows());
+        setCols(difficulty.getCols());
+        setMines(difficulty.getMines());
+    }
 
     private static boolean setRows(int r) {
         if(r <= MAX_ROWS && r > 0
@@ -107,25 +125,17 @@ public class Config {
 
     static void setDifficulty(int difficulty) {
         switch(difficulty) {
-            case BEGINNER:
-                setRows(9);
-                setCols(9);
-                setMines(10);
+            case BEGINNER_MODE:
+                setDifficulty(BEGINNER);
                 break;
-            case INTERMEDIATE:
-                setRows(16);
-                setCols(16);
-                setMines(40);
+            case INTERMEDIATE_MODE:
+                setDifficulty(INTERMEDIATE);
                 break;
-            case EXPERT:
-                setRows(16);
-                setCols(30);
-                setMines(99);
+            case EXPERT_MODE:
+                setDifficulty(EXPERT);
                 break;
-            case ENDURANCE:
-                setRows(40);
-                setCols(24);
-                setMines(192);
+            case ENDURANCE_MODE:
+                setDifficulty(ENDURANCE);
                 break;
         }
     }
