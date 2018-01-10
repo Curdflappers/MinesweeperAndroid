@@ -1,6 +1,5 @@
 package com.curdflappers.minesweeper;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.view.View;
 
@@ -234,7 +233,6 @@ public class Game implements View.OnClickListener, View.OnLongClickListener,
         mUnrevealedSpots = mSpots.length * mSpots[0].length;
     }
 
-    @SuppressLint("DefaultLocale")
     void toggleMode() {
         if(gameOver) { return; }
         sweepMode = !sweepMode;
