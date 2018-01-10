@@ -11,6 +11,7 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Locale;
 
@@ -163,24 +164,31 @@ public class GameActivity extends AppCompatActivity
     }
 
     @Override
-    public void startTimer() {
+    public void gameStart() {
         mTimerRunnable.run();
     }
 
-    @Override
     public void stopTimer() {
         mHandler.removeCallbacks(mTimerRunnable);
     }
 
     @SuppressLint("SetTextI18n")
     @Override
-    public void resetTimer() {
+    public void gameReset() {
         mStartTime = 0L;
         mTimerView.setText("00:00");
     }
 
     @Override
     public void minesLeftChanged(int minesLeft) {
-        mMinesLeftView.setText(minesLeft);
+        mMinesLeftView.setText(String.valueOf(minesLeft));
+    }
+
+    @Override
+    public void gameOver(boolean win) {
+        String msg = win ? "You win!" : "Game over!";
+        Toast.makeText(this, msg,
+                Toast.LENGTH_SHORT).show();
+        stopTimer();
     }
 }

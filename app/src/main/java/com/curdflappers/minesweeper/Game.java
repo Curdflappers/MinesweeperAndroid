@@ -3,7 +3,6 @@ package com.curdflappers.minesweeper;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.view.View;
-import android.widget.Toast;
 
 import com.curdflappers.minesweeper.utils.MinesweeperApp;
 import com.curdflappers.minesweeper.utils.VibrateService;
@@ -22,15 +21,17 @@ public class Game implements View.OnClickListener, View.OnLongClickListener,
     private GameListener listener;
     private int mMinesLeft;
 
+
+    private static final int GAME_START = 0,
+            GAME_OVER = 1,
+            GAME_RESET = 2,
+            MINES_LEFT = 3;
+    private boolean mWin;
+
     private void setMinesLeft(int count) {
         mMinesLeft = count;
         notifyListener(MINES_LEFT);
     }
-
-    private static final int TIMER_START = 0,
-            TIMER_STOP = 1,
-            TIMER_RESET = 2,
-            MINES_LEFT = 3;
 
     Game(GameListener listener) {
         mSpots = new Spot[Config.getRows()][Config.getCols()];
@@ -147,7 +148,7 @@ public class Game implements View.OnClickListener, View.OnLongClickListener,
         }
 
         mMinefieldPopulated = true;
-        notifyListener(TIMER_START);
+        notifyListener(GAME_START);
     }
 
     private int neighboringMines(int row, int col) {
@@ -171,7 +172,7 @@ public class Game implements View.OnClickListener, View.OnLongClickListener,
 
     public void spotChanged(Spot spot, int action) {
         if(spot.getExploded()) {
-            gameOver();
+            gameOver(false);
             return;
         }
 
@@ -194,16 +195,15 @@ public class Game implements View.OnClickListener, View.OnLongClickListener,
         }
     }
 
-    private void gameOver() {
+    private void gameOver(boolean win) {
         gameOver = true;
-        Toast.makeText(MinesweeperApp.getAppContext(), "Game over!",
-                Toast.LENGTH_SHORT).show();
+        mWin = win;
         for (Spot[] row : mSpots) {
             for (Spot spot : row) {
                 spot.reveal();
             }
         }
-        notifyListener(TIMER_STOP);
+        notifyListener(GAME_OVER);
     }
 
     void reset() {
@@ -219,7 +219,7 @@ public class Game implements View.OnClickListener, View.OnLongClickListener,
         // Games start in sweep mode
         if(!sweepMode)
             toggleMode();
-        notifyListener(TIMER_RESET);
+        notifyListener(GAME_RESET);
         setMinesLeft(mMines);
     }
 
@@ -236,24 +236,25 @@ public class Game implements View.OnClickListener, View.OnLongClickListener,
     private void notifyListener(int eventId) {
         if (listener == null) return;
         switch (eventId) {
-            case TIMER_START:
-                listener.startTimer();
+            case GAME_START:
+                listener.gameStart();
                 break;
-            case TIMER_STOP:
-                listener.stopTimer();
+            case GAME_OVER:
+                listener.gameOver(mWin);
                 break;
-            case TIMER_RESET:
-                listener.resetTimer();
+            case GAME_RESET:
+                listener.gameReset();
                 break;
             case MINES_LEFT:
                 listener.minesLeftChanged(mMinesLeft);
+                break;
         }
     }
 
     interface GameListener {
-        void startTimer();
-        void stopTimer();
-        void resetTimer();
+        void gameStart();
+        void gameOver(boolean win);
+        void gameReset();
 
         void minesLeftChanged(int minesLeft);
     }
