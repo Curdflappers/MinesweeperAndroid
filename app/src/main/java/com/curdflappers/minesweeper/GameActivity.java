@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,7 +23,8 @@ public class GameActivity extends AppCompatActivity
     Handler mHandler;
     int mInterval = 250; // time delay to update timer (too long makes it skip)
     long mStartTime = 0L;
-    private TextView mTimerView;
+    private TextView mTimerView, mMinesLeftView;
+    private ModeButtonView mModeButton;
     Runnable mTimerRunnable = new Runnable() {
         @Override
         public void run() {
@@ -38,7 +38,6 @@ public class GameActivity extends AppCompatActivity
             }
         }
     };
-    private TextView mMinesLeftView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,14 +60,14 @@ public class GameActivity extends AppCompatActivity
                 });
 
 
-        final ImageView MODE_BUTTON = findViewById(R.id.mode_button);
-        MODE_BUTTON.setOnClickListener(new View.OnClickListener() {
+        mModeButton = findViewById(R.id.mode_button);
+        mModeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 game.toggleMode();
                 if (game.getSweepMode())
-                    MODE_BUTTON.setImageResource(R.drawable.mine_icon);
-                else MODE_BUTTON.setImageResource(R.drawable.flag_icon);
+                    mModeButton.setImageResource(R.drawable.mine_icon);
+                else mModeButton.setImageResource(R.drawable.flag_icon);
             }
         });
         findViewById(R.id.config_button).setOnClickListener(
@@ -184,6 +183,7 @@ public class GameActivity extends AppCompatActivity
     @SuppressLint("SetTextI18n")
     @Override
     public void gameReset() {
+        mModeButton.setImageResource(R.drawable.mine_icon);
         stopTimer();
         mStartTime = 0L;
         mTimerView.setText("00:00");
