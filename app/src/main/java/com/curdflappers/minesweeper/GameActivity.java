@@ -175,6 +175,7 @@ public class GameActivity extends AppCompatActivity
     @SuppressLint("SetTextI18n")
     @Override
     public void gameReset() {
+        stopTimer();
         mStartTime = 0L;
         mTimerView.setText("00:00");
     }
