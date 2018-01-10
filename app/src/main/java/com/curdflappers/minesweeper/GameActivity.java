@@ -15,7 +15,7 @@ import android.widget.TextView;
 import java.util.Locale;
 
 public class GameActivity extends AppCompatActivity
-        implements Game.TimerListener, Game.MinesLeftListener {
+        implements Game.GameListener {
 
     RelativeLayout minefield;
     private int minefieldWidth, minefieldHeight;
@@ -46,14 +46,10 @@ public class GameActivity extends AppCompatActivity
         setToFullScreen();
 
         minefield = findViewById(R.id.minefield);
-        game = new Game();
-        game.addTimerListener(this);
-        game.addMinesLeftListener(this);
-
         mHandler = new Handler();
         mTimerView = findViewById(R.id.timer_view);
         mMinesLeftView = findViewById(R.id.mines_left_view);
-        mMinesLeftView.setText(String.valueOf(Config.getMines()));
+        game = new Game(this);
 
         findViewById(R.id.reset_button).setOnClickListener(
                 new View.OnClickListener() {
@@ -130,7 +126,7 @@ public class GameActivity extends AppCompatActivity
             offsetY = (minefieldHeight - sideLength * rows) / 2;
         }
 
-        // Place the spotviews
+        // Place the spot views
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {
                 SpotView spotView = new SpotView(
