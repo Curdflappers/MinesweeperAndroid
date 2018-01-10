@@ -6,10 +6,6 @@ public class Config {
     private static final int MAX_ROWS = 40, MAX_COLS = 24;
     static final String INVALID_ENTRY =
             "Invalid entry, must be between 1 and %d, inclusive";
-    static final int BEGINNER_MODE = 0,
-        INTERMEDIATE_MODE = 1,
-        EXPERT_MODE = 2,
-        ENDURANCE_MODE = 3;
 
     static final Difficulty
             BEGINNER = new Difficulty(9, 9, 10),
@@ -28,8 +24,7 @@ public class Config {
     static Difficulty getDifficulty() {
         return new Difficulty(getRows(), getCols(), getMines());
     }
-
-    private static void setDifficulty(Difficulty difficulty) {
+    static void setDifficulty(Difficulty difficulty) {
         setRows(difficulty.getRows());
         setCols(difficulty.getCols());
         setMines(difficulty.getMines());
@@ -121,23 +116,6 @@ public class Config {
                 return Config.maxMines();
         }
         return -1;
-    }
-
-    static void setDifficulty(int difficulty) {
-        switch(difficulty) {
-            case BEGINNER_MODE:
-                setDifficulty(BEGINNER);
-                break;
-            case INTERMEDIATE_MODE:
-                setDifficulty(INTERMEDIATE);
-                break;
-            case EXPERT_MODE:
-                setDifficulty(EXPERT);
-                break;
-            case ENDURANCE_MODE:
-                setDifficulty(ENDURANCE);
-                break;
-        }
     }
 
     interface ConfigListener {

@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.curdflappers.minesweeper.utils.ConfigEditText;
+import com.curdflappers.minesweeper.utils.Difficulty;
 
 import java.util.Locale;
 
@@ -79,15 +80,15 @@ public class ConfigActivity extends AppCompatActivity
     }
 
     private void setPresetButtons() {
-        setPresetListener(findViewById(R.id.beginner_button), Config.BEGINNER_MODE);
+        setPresetListener(findViewById(R.id.beginner_button), Config.BEGINNER);
         setPresetListener(
-                findViewById(R.id.intermediate_button), Config.INTERMEDIATE_MODE);
-        setPresetListener(findViewById(R.id.expert_button), Config.EXPERT_MODE);
+                findViewById(R.id.intermediate_button), Config.INTERMEDIATE);
+        setPresetListener(findViewById(R.id.expert_button), Config.EXPERT);
         setPresetListener(
-                findViewById(R.id.endurance_button), Config.ENDURANCE_MODE);
+                findViewById(R.id.endurance_button), Config.ENDURANCE);
     }
 
-    private void setPresetListener(View view, final int difficulty) {
+    private void setPresetListener(View view, final Difficulty difficulty) {
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
