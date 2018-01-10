@@ -48,6 +48,15 @@ public class ConfigActivity extends AppCompatActivity
         minesEdit = findViewById(R.id.mines_edit);
         minesEdit.setText(String.valueOf(Config.getMines()));
         setListeners(minesEdit, Config.MINES);
+
+        View activity = findViewById(R.id.activity_config);
+
+        activity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                findViewById(R.id.play_button).requestFocus();
+            }
+        });
     }
 
     private void setListeners(ConfigEditText edit, int field) {
@@ -58,8 +67,10 @@ public class ConfigActivity extends AppCompatActivity
                 if (i == textView.getImeOptions()) {
                     ConfigEditText edit = (ConfigEditText) textView;
                     boolean success = edit.setField();
-                    if (success && i == EditorInfo.IME_ACTION_DONE)
+                    if (success && i == EditorInfo.IME_ACTION_DONE) {
                         edit.notifyListener(ConfigEditText.HIDE_KEYBOARD);
+                        edit.clearFocus();
+                    }
                     return !success; // handles failures only
                 }
                 return false;
@@ -69,7 +80,9 @@ public class ConfigActivity extends AppCompatActivity
             @Override
             public void onFocusChange(View view, boolean b) {
                 if(!b) {
-                    ((ConfigEditText)view).setField();
+                    ConfigEditText edit = (ConfigEditText) view;
+                    edit.setField();
+                    edit.notifyListener(ConfigEditText.HIDE_KEYBOARD);
                 }
             }
         });
@@ -111,8 +124,9 @@ public class ConfigActivity extends AppCompatActivity
 
     @Override
     public void hideKeyboard(ConfigEditText edit) {
+        if(edit == null) return;
         edit.setText(String.valueOf(Config.getField(edit.getField())));
-        findViewById(R.id.activity_config).requestFocus();
+        findViewById(R.id.play_button).requestFocus();
 
         InputMethodManager mgr = (InputMethodManager)
                 getSystemService(Context.INPUT_METHOD_SERVICE);

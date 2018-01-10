@@ -2,8 +2,6 @@
 
 0001 [RESOLVED]: Config fields don't update upon pressing play, only when TextEdits lose focus
 
-0002: Pressing Play in Config activity while an EditText has focus loads Game activity with transparent navigation bar
+0002 [RESOLVED]: Pressing Play in Config activity while an EditText has focus loads Game activity with transparent navigation bar
 
 0003: Removing stylus shows opaque navigation bar that can only be hidden by loading new activity
-
-0004: Pressing Done does not remove focus from TextEdit
