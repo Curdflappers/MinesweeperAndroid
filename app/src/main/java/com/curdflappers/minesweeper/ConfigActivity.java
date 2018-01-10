@@ -20,24 +20,43 @@ public class ConfigActivity extends AppCompatActivity
         ConfigEditText.ConfigEditTextListener {
 
     ConfigEditText rowsEdit, colsEdit, minesEdit;
+    View mPlayButton, mActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_config);
         setToFullScreen();
-        final View playButton = findViewById(R.id.play_button);
-        playButton.setOnClickListener(
-                new View.OnClickListener() {
+        mPlayButton = findViewById(R.id.play_button);
+        mPlayButton.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
-            public void onClick(View view) {
-                Intent i = new Intent(ConfigActivity.this, GameActivity.class);
-                startActivity(i);
+            public void onFocusChange(View view, boolean b)
+            {
+                if(b) {
+                    Intent i = new Intent(
+                            ConfigActivity.this, GameActivity.class);
+                    startActivity(i);
+                }
             }
         });
 
+        setEdits();
+        setPresetButtons();
+
+        mActivity = findViewById(R.id.activity_config);
         Config.setListener(this);
 
+        mActivity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mActivity.requestFocus();
+            }
+        });
+
+        mActivity.requestFocus();
+    }
+
+    private void setEdits() {
         rowsEdit = findViewById(R.id.rows_edit);
         rowsEdit.setText(String.valueOf(Config.getRows()));
         setListeners(rowsEdit, Config.ROWS);
@@ -49,20 +68,9 @@ public class ConfigActivity extends AppCompatActivity
         minesEdit = findViewById(R.id.mines_edit);
         minesEdit.setText(String.valueOf(Config.getMines()));
         setListeners(minesEdit, Config.MINES);
-
-        View activity = findViewById(R.id.activity_config);
-
-        activity.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                playButton.requestFocus();
-            }
-        });
-
-        setPresetListeners();
     }
 
-    private void setPresetListeners() {
+    private void setPresetButtons() {
         setPresetListener(findViewById(R.id.beginner_button), Config.BEGINNER);
         setPresetListener(
                 findViewById(R.id.intermediate_button), Config.INTERMEDIATE);
@@ -76,6 +84,7 @@ public class ConfigActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 Config.setDifficulty(difficulty);
+                mActivity.requestFocus();
             }
         });
     }
@@ -147,7 +156,7 @@ public class ConfigActivity extends AppCompatActivity
     public void hideKeyboard(ConfigEditText edit) {
         if(edit == null) return;
         edit.setText(String.valueOf(Config.getField(edit.getField())));
-        findViewById(R.id.play_button).requestFocus();
+        mActivity.requestFocus();
 
         InputMethodManager mgr = (InputMethodManager)
                 getSystemService(Context.INPUT_METHOD_SERVICE);
