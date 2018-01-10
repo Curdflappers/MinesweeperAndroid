@@ -17,13 +17,13 @@ A streamlined implementation of the classic game, made with Android Studio. Cont
 
 - Can't place any more flags than necessary
 
-**Future elements**
-
-- Music and sound effects
-
 - Preset difficulties
 
 - High score tracker
+
+**Future elements**
+
+- Music and sound effects
 
 **Amibitious elements**
 
