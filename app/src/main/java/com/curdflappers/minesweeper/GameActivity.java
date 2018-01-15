@@ -103,7 +103,9 @@ public class GameActivity extends AppCompatActivity
                 new View.OnSystemUiVisibilityChangeListener() {
                     @Override
                     public void onSystemUiVisibilityChange(int i) {
-                        setToFullScreen();
+                        if((i & View.SYSTEM_UI_FLAG_FULLSCREEN) != 0) {
+                            setToFullScreen();
+                        }
                     }
                 }
         );
