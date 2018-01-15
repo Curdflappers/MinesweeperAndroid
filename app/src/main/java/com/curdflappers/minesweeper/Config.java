@@ -19,7 +19,9 @@ public class Config {
             PRESET_EXPERT = 2,
             PRESET_ENDURANCE = 3;
 
-    private static int rows = 20, cols = 12, mines = 40;
+    private static int rows = ENDURANCE.getRows(),
+            cols = ENDURANCE.getCols(),
+            mines = ENDURANCE.getMines();
     static final int ROWS = 0, COLS = 1, MINES = 2;
     private static ConfigListener listener;
 
