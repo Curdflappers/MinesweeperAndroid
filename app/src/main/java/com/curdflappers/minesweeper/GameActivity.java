@@ -191,7 +191,8 @@ public class GameActivity extends AppCompatActivity
 
     @Override
     public void minesLeftChanged(int minesLeft) {
-        mMinesLeftView.setText(String.valueOf(minesLeft));
+        mMinesLeftView.setText(String.format(
+                Locale.getDefault(), "%03d", minesLeft));
     }
 
     @Override
@@ -205,8 +206,6 @@ public class GameActivity extends AppCompatActivity
             int diffCode = Config.getPresetDifficulty();
             if (HighScoreHelper.isTopScore(this, score, diffCode)) {
                 HighScoreHelper.setTopScore(this, score, diffCode);
-
-
 
                 SimpleAlertDialog dialog = SimpleAlertDialog.newInstance(
                         "New High Score!", String.format(
