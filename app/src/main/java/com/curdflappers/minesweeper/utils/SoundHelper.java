@@ -68,6 +68,12 @@ public class SoundHelper {
         }
     }
 
+    public void resetMusic() {
+        if (mMusicPlayer != null) {
+            mMusicPlayer.seekTo(0);
+        }
+    }
+
     public void pauseMusic() {
         if (mMusicPlayer != null && mMusicPlayer.isPlaying()) {
             mMusicPlayer.pause();

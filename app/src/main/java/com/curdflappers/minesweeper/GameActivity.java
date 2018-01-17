@@ -231,6 +231,7 @@ public class GameActivity extends AppCompatActivity
         mModeButton.setImageResource(R.drawable.mine_icon);
         stopTimer();
         mSoundHelper.pauseMusic();
+        mSoundHelper.resetMusic();
         mStartTime = 0L;
         mTimerView.setText("00:00");
     }
