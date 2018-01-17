@@ -190,10 +190,9 @@ public class GameActivity extends AppCompatActivity
         stopTimer();
         mSoundHelper.pauseMusic();
         int score = (int)((System.currentTimeMillis() - mStartTime) / 1000);
-        String msg = win ? "You win!" : "Game over!";
-        Toast.makeText(this, msg,
-                Toast.LENGTH_SHORT).show();
         if(win) {
+            Toast.makeText(this, "You win!",
+                    Toast.LENGTH_SHORT).show();
             int diffCode = Config.getPresetDifficulty();
             if (HighScoreHelper.isTopScore(this, score, diffCode)) {
                 HighScoreHelper.setTopScore(this, score, diffCode);
