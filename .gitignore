@@ -35,5 +35,7 @@ output.json
 obj/
 .externalNativeBuild
 
-# Visual assets
+# Binary assets
 *.png
+*.mp3
+*.wav

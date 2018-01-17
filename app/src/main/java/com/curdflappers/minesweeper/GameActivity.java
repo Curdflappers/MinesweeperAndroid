@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.curdflappers.minesweeper.utils.HighScoreHelper;
 import com.curdflappers.minesweeper.utils.SimpleAlertDialog;
+import com.curdflappers.minesweeper.utils.SoundHelper;
 
 import java.util.Locale;
 
@@ -28,6 +29,7 @@ public class GameActivity extends AppCompatActivity
     long mStartTime = 0L;
     private TextView mTimerView, mMinesLeftView;
     private ModeButtonView mModeButton;
+    private SoundHelper mSoundHelper;
     Runnable mTimerRunnable = new Runnable() {
         @Override
         public void run() {
@@ -54,6 +56,9 @@ public class GameActivity extends AppCompatActivity
         mTimerView = findViewById(R.id.timer_view);
         mMinesLeftView = findViewById(R.id.mines_left_view);
         game = new Game(this);
+        mSoundHelper = new SoundHelper(this);
+        mSoundHelper.prepareMusicPlayer(this);
+
 
         findViewById(R.id.reset_button).setOnClickListener(
                 new View.OnClickListener() {
@@ -74,6 +79,7 @@ public class GameActivity extends AppCompatActivity
                 else mModeButton.setImageResource(R.drawable.flag_icon);
             }
         });
+
         findViewById(R.id.config_button).setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -175,31 +181,14 @@ public class GameActivity extends AppCompatActivity
 
     @Override
     public void gameStart() {
-        mTimerRunnable.run();
-    }
-
-    public void stopTimer() {
-        mHandler.removeCallbacks(mTimerRunnable);
-    }
-
-    @SuppressLint("SetTextI18n")
-    @Override
-    public void gameReset() {
-        mModeButton.setImageResource(R.drawable.mine_icon);
-        stopTimer();
-        mStartTime = 0L;
-        mTimerView.setText("00:00");
-    }
-
-    @Override
-    public void minesLeftChanged(int minesLeft) {
-        mMinesLeftView.setText(String.format(
-                Locale.getDefault(), "%03d", minesLeft));
+        startTimer();
+        mSoundHelper.playMusic();
     }
 
     @Override
     public void gameOver(boolean win) {
         stopTimer();
+        mSoundHelper.pauseMusic();
         int score = (int)((System.currentTimeMillis() - mStartTime) / 1000);
         String msg = win ? "You win!" : "Game over!";
         Toast.makeText(this, msg,
@@ -217,7 +206,23 @@ public class GameActivity extends AppCompatActivity
                 dialog.show(getSupportFragmentManager(), null);
                 setToFullScreen();
             }
+        } else {
+            mSoundHelper.playSound();
         }
+    }
+
+    @SuppressLint("SetTextI18n")
+    @Override
+    public void gameReset() {
+        mModeButton.setImageResource(R.drawable.mine_icon);
+        mStartTime = 0L;
+        mTimerView.setText("00:00");
+    }
+
+    @Override
+    public void minesLeftChanged(int minesLeft) {
+        mMinesLeftView.setText(String.format(
+                Locale.getDefault(), "%03d", minesLeft));
     }
 
     private String timeFormat(int seconds) {
@@ -225,5 +230,13 @@ public class GameActivity extends AppCompatActivity
         seconds %= 60;
         return String.format(Locale.getDefault(),
                 "%02d:%02d", minutes, seconds);
+    }
+
+    private void startTimer() {
+        mTimerRunnable.run();
+    }
+
+    private void stopTimer() {
+        mHandler.removeCallbacks(mTimerRunnable);
     }
 }
