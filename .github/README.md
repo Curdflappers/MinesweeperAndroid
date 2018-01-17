@@ -21,11 +21,13 @@ A streamlined implementation of the classic game, made with Android Studio. Cont
 
 - High score tracker
 
-**Future elements**
-
 - Music and sound effects
 
 **Amibitious elements**
+
+- Support device rotation
+
+- Save games between sessions
 
 - Different game modes!
   - Infinite Sweeper: Field gets denser as you venture from the center
@@ -37,5 +39,3 @@ A streamlined implementation of the classic game, made with Android Studio. Cont
 
 - Hints
   - Use autosolver functionality to request help whenever you're stuck
-  
-- Optimize support for rotation
