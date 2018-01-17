@@ -25,8 +25,8 @@ public class ConfigActivity extends AppCompatActivity
         implements Config.ConfigListener,
         ConfigEditText.ConfigEditTextListener {
 
-    ConfigEditText rowsEdit, colsEdit, minesEdit;
-    View mPlayButton, mActivity;
+    private ConfigEditText rowsEdit, colsEdit, minesEdit;
+    private View mPlayButton, mActivity;
     private static final float SIDE_PADDING_PCT = 0.2f,
         TOP_PADDING_PCT = 0.05f;
 
@@ -197,7 +197,7 @@ public class ConfigActivity extends AppCompatActivity
         setToFullScreen();
     }
 
-    public void setToFullScreen()
+    private void setToFullScreen()
     {
         findViewById(R.id.activity_config).setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_LOW_PROFILE

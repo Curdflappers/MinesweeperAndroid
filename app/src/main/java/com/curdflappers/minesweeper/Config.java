@@ -13,6 +13,7 @@ public class Config {
             EXPERT = new Difficulty(16, 16, 99),
             ENDURANCE = new Difficulty(40, 24, 192);
 
+    @SuppressWarnings("WeakerAccess")
     public static final int CUSTOM = -1,
             PRESET_BEGINNER = 0,
             PRESET_INTERMEDIATE = 1,
@@ -29,7 +30,7 @@ public class Config {
     static int getCols() { return cols; }
     static int getMines() { return mines; }
 
-    static Difficulty getDifficulty() {
+    private static Difficulty getDifficulty() {
         return new Difficulty(getRows(), getCols(), getMines());
     }
     static int getPresetDifficulty() {

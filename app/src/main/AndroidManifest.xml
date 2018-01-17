@@ -7,20 +7,43 @@
     <application
         android:name=".utils.MinesweeperApp"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/mine_icon"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/mine_icon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <service android:name=".utils.VibrateService" />
 
-        <activity android:name=".GameActivity"
+        <activity
+            android:name=".GameActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:scheme="http"
+                    android:host="curdflappers.com"
+                    android:pathPattern="/minesweeper" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:scheme="https"
+                    android:host="curdflappers.com"
+                    android:pathPattern="/minesweeper" />
             </intent-filter>
         </activity>
         <activity android:name=".ConfigActivity" />

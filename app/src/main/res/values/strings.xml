@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Minesweeper</string>
-    <string name="spot">Spot</string>
     <string name="change_mode">Change mode</string>
     <string name="reset_game">Reset game</string>
     <string name="columns">Columns:</string>

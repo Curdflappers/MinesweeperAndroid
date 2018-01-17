@@ -8,9 +8,10 @@ import com.curdflappers.minesweeper.Config;
 
 public class ConfigEditText
         extends android.support.v7.widget.AppCompatEditText {
-    ConfigEditTextListener mListener;
-    int mField;
-    public static final int HIDE_KEYBOARD = 0, SET_FIELD_FAILURE = 1;
+    private ConfigEditTextListener mListener;
+    private int mField;
+    public static final int HIDE_KEYBOARD = 0;
+    private static final int SET_FIELD_FAILURE = 1;
 
     public ConfigEditText(Context context, AttributeSet attrs) {
         super(context, attrs);

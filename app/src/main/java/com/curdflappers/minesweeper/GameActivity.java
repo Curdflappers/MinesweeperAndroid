@@ -21,17 +21,17 @@ import java.util.Locale;
 public class GameActivity extends AppCompatActivity
         implements Game.GameListener {
 
-    RelativeLayout minefield;
+    private RelativeLayout minefield;
     private int minefieldWidth, minefieldHeight;
-    Game game;
-    Handler mHandler;
-    int mInterval = 250; // time delay to update timer (too long makes it skip)
-    long mStartTime = 0L;
+    private Game game;
+    private Handler mHandler;
+    private int mInterval = 250; // time delay to update timer (too long makes it skip)
+    private long mStartTime = 0L;
     private TextView mTimerView, mMinesLeftView;
     private ModeButtonView mModeButton;
     public static SoundHelper mSoundHelper;
     private boolean mGamePlaying;
-    Runnable mTimerRunnable = new Runnable() {
+    private Runnable mTimerRunnable = new Runnable() {
         @Override
         public void run() {
             if (mStartTime == 0L) {
@@ -119,7 +119,7 @@ public class GameActivity extends AppCompatActivity
         mGamePlaying = false;
     }
 
-    void updateTimer() {
+    private void updateTimer() {
         long millisElapsed = (int) (System.currentTimeMillis() - mStartTime);
         mTimerView.setText(timeFormat((int)millisElapsed/1000));
     }
