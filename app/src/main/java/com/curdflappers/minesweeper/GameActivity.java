@@ -110,14 +110,11 @@ public class GameActivity extends AppCompatActivity
 
         findViewById(R.id.activity_game).setOnSystemUiVisibilityChangeListener(
                 new View.OnSystemUiVisibilityChangeListener() {
-                    @Override
-                    public void onSystemUiVisibilityChange(int i) {
-                        if((i & View.SYSTEM_UI_FLAG_FULLSCREEN) != 0) {
-                            setToFullScreen();
-                        }
-                    }
-                }
-        );
+            @Override
+            public void onSystemUiVisibilityChange(int i) {
+                    setToFullScreen();
+            }
+        });
 
         mGamePlaying = false;
     }
