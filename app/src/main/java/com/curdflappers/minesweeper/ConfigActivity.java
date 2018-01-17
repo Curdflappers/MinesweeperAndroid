@@ -36,19 +36,14 @@ public class ConfigActivity extends AppCompatActivity
         setContentView(R.layout.activity_config);
         setToFullScreen();
         mPlayButton = findViewById(R.id.play_button);
-        mPlayButton.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        mPlayButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onFocusChange(View view, boolean b)
-            {
-                if(b) {
-                    Intent i = new Intent(
-                            ConfigActivity.this, GameActivity.class);
-                    startActivity(i);
-                }
+            public void onClick(View view) {
+                Intent i = new Intent(ConfigActivity.this, GameActivity.class);
+                startActivity(i);
             }
         });
-
-        setEdits();
+                setEdits();
         setPresetButtons();
 
         mActivity = findViewById(R.id.activity_config);
