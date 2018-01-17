@@ -216,6 +216,8 @@ public class GameActivity extends AppCompatActivity
     @Override
     public void gameReset() {
         mModeButton.setImageResource(R.drawable.mine_icon);
+        stopTimer();
+        mSoundHelper.pauseMusic();
         mStartTime = 0L;
         mTimerView.setText("00:00");
     }
