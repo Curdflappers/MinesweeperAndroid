@@ -11,11 +11,13 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.curdflappers.minesweeper.utils.ConfigEditText;
 import com.curdflappers.minesweeper.utils.Difficulty;
+import com.curdflappers.minesweeper.utils.SoundHelper;
 
 import java.util.Locale;
 
@@ -63,6 +65,55 @@ public class ConfigActivity extends AppCompatActivity
 
         setPadding();
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        setSeekBars();
+    }
+
+    private void setSeekBars() {
+        SoundHelper soundHelper = GameActivity.mSoundHelper;
+        SeekBar musicBar = findViewById(R.id.music_seekbar);
+        SeekBar sfxBar = findViewById(R.id.sfx_seekbar);
+
+        musicBar.setProgress(
+                (int)(soundHelper.getMusicVolume() * musicBar.getMax()));
+        sfxBar.setProgress(
+                (int)(soundHelper.getSFXVolume() * sfxBar.getMax()));
+
+        musicBar.setOnSeekBarChangeListener(
+                new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                float percent = (float) (i) / seekBar.getMax();
+                GameActivity.mSoundHelper.setMusicVolume(percent);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+        sfxBar.setOnSeekBarChangeListener(
+                new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                float percent = (float) (i) / seekBar.getMax();
+                GameActivity.mSoundHelper.setSFXVolume(percent);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
     }
 
     private void setEdits() {

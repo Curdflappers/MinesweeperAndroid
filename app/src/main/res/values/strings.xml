@@ -11,4 +11,6 @@
     <string name="intermediate">Intermediate</string>
     <string name="expert">Expert</string>
     <string name="endurance">Endurance</string>
+    <string name="music_volume">Music volume</string>
+    <string name="sfx_volume">Sound effects volume</string>
 </resources>

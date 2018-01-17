@@ -8,6 +8,7 @@
     android:focusableInTouchMode="true"
     android:gravity="center_horizontal"
     android:orientation="vertical"
+    android:scrollbarStyle="insideOverlay"
     tools:context="com.curdflappers.minesweeper.ConfigActivity">
 
     <LinearLayout
@@ -15,143 +16,184 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-    <Button
-        android:id="@+id/play_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:focusableInTouchMode="true"
-        android:text="@string/play"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/rows_label"
-            android:layout_width="0dp"
+        <Button
+            android:id="@+id/play_button"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:layout_weight="1"
-            android:gravity="end|center"
-            android:labelFor="@id/rows_edit"
-            android:text="@string/rows" />
+            android:focusableInTouchMode="true"
+            android:text="@string/play"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <com.curdflappers.minesweeper.utils.ConfigEditText
-            android:id="@+id/rows_edit"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_weight="1"
-            android:ems="10"
-            android:imeOptions="actionNext"
-            android:inputType="number"
-            android:selectAllOnFocus="true"
-            android:maxLength="2" />
-    </LinearLayout>
+            android:orientation="horizontal">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+            <TextView
+                android:id="@+id/rows_label"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_weight="1"
+                android:gravity="end|center"
+                android:labelFor="@id/rows_edit"
+                android:text="@string/rows" />
 
-        <TextView
-            android:id="@+id/columns_label"
-            android:layout_width="0dp"
+            <com.curdflappers.minesweeper.utils.ConfigEditText
+                android:id="@+id/rows_edit"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_weight="1"
+                android:ems="10"
+                android:imeOptions="actionNext"
+                android:inputType="number"
+                android:maxLength="2"
+                android:selectAllOnFocus="true" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_weight="1"
-            android:gravity="end|center"
-            android:labelFor="@id/columns_edit"
-            android:text="@string/columns" />
+            android:orientation="horizontal">
 
-        <com.curdflappers.minesweeper.utils.ConfigEditText
-            android:id="@+id/columns_edit"
-            android:layout_width="0dp"
+            <TextView
+                android:id="@+id/columns_label"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_weight="1"
+                android:gravity="end|center"
+                android:labelFor="@id/columns_edit"
+                android:text="@string/columns" />
+
+            <com.curdflappers.minesweeper.utils.ConfigEditText
+                android:id="@+id/columns_edit"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_weight="1"
+                android:ems="10"
+                android:imeOptions="actionNext"
+                android:inputType="number"
+                android:maxLength="2"
+                android:selectAllOnFocus="true" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_weight="1"
-            android:ems="10"
-            android:imeOptions="actionNext"
-            android:inputType="number"
-            android:selectAllOnFocus="true"
-            android:maxLength="2" />
+            android:orientation="horizontal">
 
-    </LinearLayout>
+            <TextView
+                android:id="@+id/mines_label"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_weight="1"
+                android:gravity="end|center"
+                android:labelFor="@id/mines_edit"
+                android:text="@string/mines" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+            <com.curdflappers.minesweeper.utils.ConfigEditText
+                android:id="@+id/mines_edit"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_weight="1"
+                android:ems="10"
+                android:imeOptions="actionDone"
+                android:inputType="number"
+                android:maxLength="3"
+                android:selectAllOnFocus="true" />
+        </LinearLayout>
 
-        <TextView
-            android:id="@+id/mines_label"
-            android:layout_width="0dp"
+        <Button
+            android:id="@+id/beginner_button"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
             android:layout_weight="1"
-            android:gravity="end|center"
-            android:labelFor="@id/mines_edit"
-            android:text="@string/mines" />
+            android:text="@string/beginner" />
 
-        <com.curdflappers.minesweeper.utils.ConfigEditText
-            android:id="@+id/mines_edit"
-            android:layout_width="0dp"
+        <Button
+            android:id="@+id/intermediate_button"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
             android:layout_weight="1"
-            android:ems="10"
-            android:imeOptions="actionDone"
-            android:inputType="number"
-            android:selectAllOnFocus="true"
-            android:maxLength="3" />
-    </LinearLayout>
+            android:text="@string/intermediate" />
 
-    <Button android:id="@+id/beginner_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="@string/beginner" />
+        <Button
+            android:id="@+id/expert_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/expert" />
 
-    <Button
-        android:id="@+id/intermediate_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="@string/intermediate" />
+        <Button
+            android:id="@+id/endurance_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/endurance" />
 
-    <Button
-        android:id="@+id/expert_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="@string/expert" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/endurance_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="@string/endurance" />
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:contentDescription="@string/music_volume"
+                android:src="@drawable/music" />
+
+            <SeekBar
+                android:id="@+id/music_seekbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:contentDescription="@string/sfx_volume"
+                android:src="@drawable/sfx" />
+
+            <SeekBar
+                android:id="@+id/sfx_seekbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+        </LinearLayout>
 
     </LinearLayout>
 

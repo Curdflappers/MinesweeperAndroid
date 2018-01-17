@@ -16,18 +16,10 @@ public class SoundHelper {
     private SoundPool mSoundPool;
     private int mSoundID;
     private boolean mLoaded;
-    private float mVolume;
+
+    private float mSFXVolume, mMusicVolume;
 
     public SoundHelper(Activity activity) {
-
-        AudioManager audioManager = (AudioManager)
-                activity.getSystemService(Context.AUDIO_SERVICE);
-        float actVolume = (float)
-                audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
-        float maxVolume = (float)
-                audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-        mVolume = actVolume / maxVolume;
-
         activity.setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
         // Differs with versions older than Lollipop
@@ -44,25 +36,29 @@ public class SoundHelper {
             mSoundPool = new SoundPool(6, AudioManager.STREAM_MUSIC, 0);
         }
 
-        mSoundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
+        mSoundPool.setOnLoadCompleteListener(
+                new SoundPool.OnLoadCompleteListener() {
             @Override
-            public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
+            public void onLoadComplete(
+                    SoundPool soundPool, int sampleId, int status) {
                 mLoaded = true;
             }
         });
         mSoundID = mSoundPool.load(activity, R.raw.explosion, 1);
+        mSFXVolume = 0.5f;
+        mMusicVolume = 0.5f;
     }
 
     public void playSound() {
         if (mLoaded) {
-            mSoundPool.play(mSoundID, mVolume, mVolume, 1, 0, 1f);
+            mSoundPool.play(mSoundID, mSFXVolume, mSFXVolume, 1, 0, 1f);
         }
     }
 
     public void prepareMusicPlayer(Context context) {
         mMusicPlayer = MediaPlayer.create(context.getApplicationContext(),
                 R.raw.music);
-        mMusicPlayer.setVolume(0.5f, 0.5f);
+        mMusicPlayer.setVolume(mMusicVolume, mMusicVolume);
         mMusicPlayer.setLooping(true);
     }
 
@@ -76,5 +72,22 @@ public class SoundHelper {
         if (mMusicPlayer != null && mMusicPlayer.isPlaying()) {
             mMusicPlayer.pause();
         }
+    }
+
+    public void setMusicVolume(float musicVolume) {
+        mMusicVolume = musicVolume;
+        mMusicPlayer.setVolume(mMusicVolume, mMusicVolume);
+    }
+
+    public void setSFXVolume(float sfxVolume) {
+        mSFXVolume = sfxVolume;
+    }
+
+    public float getMusicVolume() {
+        return mMusicVolume;
+    }
+
+    public float getSFXVolume() {
+        return mSFXVolume;
     }
 }

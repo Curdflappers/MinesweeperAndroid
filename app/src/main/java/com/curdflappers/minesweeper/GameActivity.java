@@ -29,7 +29,7 @@ public class GameActivity extends AppCompatActivity
     long mStartTime = 0L;
     private TextView mTimerView, mMinesLeftView;
     private ModeButtonView mModeButton;
-    private SoundHelper mSoundHelper;
+    public static SoundHelper mSoundHelper;
     Runnable mTimerRunnable = new Runnable() {
         @Override
         public void run() {
@@ -56,8 +56,10 @@ public class GameActivity extends AppCompatActivity
         mTimerView = findViewById(R.id.timer_view);
         mMinesLeftView = findViewById(R.id.mines_left_view);
         game = new Game(this);
-        mSoundHelper = new SoundHelper(this);
-        mSoundHelper.prepareMusicPlayer(this);
+        if(mSoundHelper == null) {
+            mSoundHelper = new SoundHelper(this);
+            mSoundHelper.prepareMusicPlayer(this);
+        }
 
 
         findViewById(R.id.reset_button).setOnClickListener(
