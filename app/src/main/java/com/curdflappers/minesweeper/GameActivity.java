@@ -30,6 +30,7 @@ public class GameActivity extends AppCompatActivity
     private TextView mTimerView, mMinesLeftView;
     private ModeButtonView mModeButton;
     public static SoundHelper mSoundHelper;
+    private boolean mGamePlaying;
     Runnable mTimerRunnable = new Runnable() {
         @Override
         public void run() {
@@ -117,6 +118,8 @@ public class GameActivity extends AppCompatActivity
                     }
                 }
         );
+
+        mGamePlaying = false;
     }
 
     void updateTimer() {
@@ -160,14 +163,21 @@ public class GameActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        mSoundHelper.pauseMusic();
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         setToFullScreen();
+        if(mGamePlaying) mSoundHelper.playMusic();
     }
 
     @Override
     public void onDestroy() {
-        mHandler.removeCallbacks(mTimerRunnable);
+        stopTimer();
         super.onDestroy();
     }
 
@@ -183,12 +193,14 @@ public class GameActivity extends AppCompatActivity
 
     @Override
     public void gameStart() {
+        mGamePlaying = true;
         startTimer();
         mSoundHelper.playMusic();
     }
 
     @Override
     public void gameOver(boolean win) {
+        mGamePlaying = false;
         stopTimer();
         mSoundHelper.pauseMusic();
         int score = (int)((System.currentTimeMillis() - mStartTime) / 1000);
@@ -215,6 +227,7 @@ public class GameActivity extends AppCompatActivity
     @SuppressLint("SetTextI18n")
     @Override
     public void gameReset() {
+        mGamePlaying = false;
         mModeButton.setImageResource(R.drawable.mine_icon);
         stopTimer();
         mSoundHelper.pauseMusic();
