@@ -22,7 +22,6 @@ import java.util.Locale;
 public class GameActivity extends AppCompatActivity
         implements Game.GameListener {
 
-    private ViewGroup mRootLayout;
     private RelativeLayout mFieldView;
     private int mFieldWidth, mFieldHeight, mRotation;
     private static Game game;
@@ -52,7 +51,6 @@ public class GameActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
-        mRootLayout = findViewById(R.id.activity_game);
         setToFullScreen();
         HighScoreHelper.clearTopScores(this);
 
@@ -153,36 +151,42 @@ public class GameActivity extends AppCompatActivity
     }
 
     private void showMineField() {
-        int x = 0, y = 0, offsetX = 0, offsetY = 0;
+        int sideLength, offset;
         int rows = Config.getRows(), cols = Config.getCols();
 
         // Set up visual formatting
-        int sideLength =
-                Math.min(mFieldWidth / cols, mFieldHeight / rows);
-        if (sideLength < mFieldWidth / cols) { // horizontal offset
-            offsetX = (mFieldWidth - sideLength * cols) / 2;
-        } else { // vertical offset
-            offsetY = (mFieldHeight - sideLength * rows) / 2;
+        if(mRotation == 0) {
+            sideLength = Math.min(mFieldWidth / cols, mFieldHeight / rows);
+            offset = (mFieldHeight - sideLength * rows) / 2;
+        } else {
+            sideLength = Math.min(mFieldHeight / cols, mFieldWidth / rows);
+            offset = (mFieldWidth - sideLength * rows) / 2;
         }
 
-        // Place the spot views
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {
-                sizeAndPosition(spotViews[r][c], sideLength, x + offsetX, y + offsetY);
+                sizeAndPosition(spotViews[r][c], sideLength, r, c, offset);
                 mFieldView.addView(spotViews[r][c]);
-                x += sideLength;
             }
-            x = 0;
-            y += sideLength;
         }
     }
 
-    private void sizeAndPosition(SpotView view, int sideLength, int x, int y) {
+    private void sizeAndPosition(
+            SpotView view, int sideLength, int r, int c, int offset) {
         RelativeLayout.LayoutParams params =
                 new RelativeLayout.LayoutParams(sideLength, sideLength);
         view.setLayoutParams(params);
-        view.setX(x);
-        view.setY(y);
+
+        if(mRotation == 0) {
+            view.setX(c * sideLength);
+            view.setY(r * sideLength + offset);
+        } else if(mRotation == 1) {
+            view.setX(r * sideLength + offset);
+            view.setY(mFieldHeight - sideLength * (c + 1));
+        } else {
+            view.setX((Config.getRows() - r - 1) * sideLength + offset);
+            view.setY(c * sideLength);
+        }
     }
 
     @Override
