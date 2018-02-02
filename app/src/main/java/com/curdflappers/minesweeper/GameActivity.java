@@ -229,6 +229,7 @@ public class GameActivity extends AppCompatActivity
     @Override
     public void onDestroy() {
         stopTimer();
+        mFieldView.removeAllViews();
         super.onDestroy();
     }
 
@@ -306,10 +307,5 @@ public class GameActivity extends AppCompatActivity
 
     private void stopTimer() {
         mHandler.removeCallbacks(mTimerRunnable);
-    }
-
-    protected void onSaveInstanceState(Bundle bundle) {
-        mFieldView.removeAllViews();
-        super.onSaveInstanceState(bundle);
     }
 }
