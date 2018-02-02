@@ -25,15 +25,16 @@ public class GameActivity extends AppCompatActivity
     private RelativeLayout mFieldView;
     private int mFieldWidth, mFieldHeight, mRotation;
     private static Game game;
-    private Handler mHandler;
-    private int mInterval = 250; // time delay to update timer (too long makes it skip)
-    private long mStartTime;
-    private TextView mTimerView, mMinesLeftView;
+    private static Handler mHandler = new Handler();
+    private static final int INTERVAL = 250; // time delay to update timer (too long makes it skip)
+    private static long mStartTime;
+    private static TextView mTimerView;
+    private TextView mMinesLeftView;
     private ModeButtonView mModeButton;
     public static SoundHelper mSoundHelper;
     private boolean mGamePlaying;
     private static SpotView[][] spotViews;
-    private Runnable mTimerRunnable = new Runnable() {
+    private static Runnable mTimerRunnable = new Runnable() {
         @Override
         public void run() {
             if (mStartTime == 0L) {
@@ -42,7 +43,7 @@ public class GameActivity extends AppCompatActivity
             try {
                 updateTimer();
             } finally {
-                mHandler.postDelayed(mTimerRunnable, mInterval);
+                mHandler.postDelayed(mTimerRunnable, INTERVAL);
             }
         }
     };
@@ -140,7 +141,7 @@ public class GameActivity extends AppCompatActivity
         });
     }
 
-    private void updateTimer() {
+    private static void updateTimer() {
         long millisElapsed = (int) (System.currentTimeMillis() - mStartTime);
         mTimerView.setText(timeFormat((int)millisElapsed/1000));
     }
@@ -297,7 +298,7 @@ public class GameActivity extends AppCompatActivity
                 Locale.getDefault(), "%03d", minesLeft));
     }
 
-    private String timeFormat(int seconds) {
+    private static String timeFormat(int seconds) {
         int minutes = seconds/60;
         seconds %= 60;
         return String.format(Locale.getDefault(),
