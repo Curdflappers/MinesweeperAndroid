@@ -10,6 +10,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Random;
 
+import static com.curdflappers.minesweeper.Spot.EXPLODED;
+import static com.curdflappers.minesweeper.Spot.FLAGGED;
+import static com.curdflappers.minesweeper.Spot.MINE;
+import static com.curdflappers.minesweeper.Spot.REVEALED;
+
 public class Game implements View.OnClickListener, View.OnLongClickListener,
         Spot.SpotListener {
     private Spot[][] mSpots;
@@ -74,7 +79,7 @@ public class Game implements View.OnClickListener, View.OnLongClickListener,
         if(gameOver) return;
 
         // tapping revealed spots reveals neighbors or does nothing
-        if(spot.getRevealed()) {
+        if(spot.get(REVEALED)) {
             revealNeighborsIfSafe(spot);
             return;
         }
@@ -84,7 +89,7 @@ public class Game implements View.OnClickListener, View.OnLongClickListener,
                 populateMinefield(spot.getRow(), spot.getCol());
             }
             spot.sweep();
-        } else if (mMinesLeft > 0 || spot.getFlagged()){
+        } else if (mMinesLeft > 0 || spot.get(FLAGGED)){
             spot.flag();
         }
     }
@@ -115,7 +120,7 @@ public class Game implements View.OnClickListener, View.OnLongClickListener,
         for (int r = row - 1; r <= row + 1; r++) {
             for (int c = col - 1; c <= col + 1; c++) {
                 if(!(r == row && c == col) && validLoc(r, c)
-                        && mSpots[r][c].getFlagged()) {
+                        && mSpots[r][c].get(FLAGGED)) {
                     count++;
                 }
             }
@@ -136,7 +141,7 @@ public class Game implements View.OnClickListener, View.OnLongClickListener,
         for(int i = 0; i < mMines; i++)
         {
             int index = random.nextInt(spots.size());
-            spots.get(index).setAsMine();
+            spots.get(index).set(MINE, true);
             spots.remove(index);
         }
 
@@ -157,7 +162,7 @@ public class Game implements View.OnClickListener, View.OnLongClickListener,
         for (int r = row - 1; r <= row + 1; r++) {
             for (int c = col - 1; c <= col + 1; c++) {
                 if(!(r == row && c == col) && validLoc(r, c)
-                        && mSpots[r][c].getMine()) {
+                        && mSpots[r][c].get(MINE)) {
                     count++;
                 }
             }
@@ -171,13 +176,13 @@ public class Game implements View.OnClickListener, View.OnLongClickListener,
     }
 
     public void spotChanged(Spot spot, int action) {
-        if(spot.getExploded()) {
+        if(spot.get(EXPLODED)) {
             gameOver(false);
             return;
         }
 
         switch(action) {
-            case Spot.SWEPT:
+            case Spot.SWEEP_ACTION:
                 if(spot.getNeighboringMines() == 0) {
                     int row = spot.getRow(), col = spot.getCol();
                     for(int r = row - 1; r <= row + 1; r++) {
@@ -192,8 +197,8 @@ public class Game implements View.OnClickListener, View.OnLongClickListener,
                     gameOver(true);
                 }
                 break;
-            case Spot.FLAGGED:
-                boolean flagged = spot.getFlagged();
+            case Spot.FLAG_ACTION:
+                boolean flagged = spot.get(FLAGGED);
                 setMinesLeft(mMinesLeft + (flagged ? -1 : 1));
                 break;
         }
@@ -204,8 +209,8 @@ public class Game implements View.OnClickListener, View.OnLongClickListener,
         mWin = win;
         for (Spot[] row : mSpots) {
             for (Spot spot : row) {
-                if(!spot.getRevealed()) {
-                    if(win && !spot.getFlagged())
+                if(!spot.get(REVEALED)) {
+                    if(win && !spot.get(FLAGGED))
                         spot.flag();
                     else
                         spot.reveal();

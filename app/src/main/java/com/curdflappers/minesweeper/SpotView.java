@@ -4,6 +4,11 @@ import android.content.Context;
 import android.support.v7.widget.AppCompatImageView;
 import android.widget.RelativeLayout;
 
+import static com.curdflappers.minesweeper.Spot.EXPLODED;
+import static com.curdflappers.minesweeper.Spot.FLAGGED;
+import static com.curdflappers.minesweeper.Spot.MINE;
+import static com.curdflappers.minesweeper.Spot.REVEALED;
+
 public class SpotView extends AppCompatImageView {
     public Spot spot;
 
@@ -22,14 +27,14 @@ public class SpotView extends AppCompatImageView {
     }
 
     public void update() {
-        if(!spot.getRevealed() && !spot.getFlagged())
+        if(!spot.get(REVEALED) && !spot.get(FLAGGED))
         {
             setImageResource(R.drawable.unrevealed);
             return;
         }
 
-        if(spot.getFlagged()) {
-            if(spot.getRevealed() && !spot.getMine())
+        if(spot.get(FLAGGED)) {
+            if(spot.get(REVEALED) && !spot.get(MINE))
                 setImageResource(R.drawable.false_flag);
             else
                 setImageResource(R.drawable.flag);
@@ -37,8 +42,8 @@ public class SpotView extends AppCompatImageView {
         }
 
         // at this point the spot is definitely revealed and unflagged
-        if(spot.getMine())
-            if(spot.getExploded())
+        if(spot.get(MINE))
+            if(spot.get(EXPLODED))
                 setImageResource(R.drawable.exploded_mine);
             else
                 setImageResource(R.drawable.mine);

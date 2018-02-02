@@ -1,29 +1,34 @@
 package com.curdflappers.minesweeper;
 
 class Spot {
-    private boolean mMine;
-    private boolean mRevealed;
-    private boolean mFlagged;
-    private boolean mExploded;
-    private int mNeighboringMines;
+    private int mState;
     private int mRow;
     private int mCol;
     private SpotView mView;
     private SpotListener listener;
-    static final int SWEPT = 0,
-        FLAGGED = 1;
+    static final int BOOL_FIELDS = 4;
+    static final int MINE = 1,
+        REVEALED = 2,
+        FLAGGED = 4,
+        EXPLODED = 8;
+    static final int SWEEP_ACTION = 0,
+        FLAG_ACTION = 1;
 
     Spot(SpotListener listener, int r, int c) {
         this.listener = listener;
         mRow = r;
         mCol = c;
     }
+    boolean get(int field) { return (mState & field) > 0; }
+    void set(int field, boolean val) {
+        if(val) {
+            mState |= field;
+        } else {
+            mState &= -(field + 1);
+        }
+    }
 
-    boolean getMine() { return mMine; }
-    boolean getRevealed() { return mRevealed; }
-    boolean getFlagged() { return mFlagged; }
-    boolean getExploded() { return mExploded; }
-    int getNeighboringMines() { return mNeighboringMines; }
+    int getNeighboringMines() { return (mState & 112) >> BOOL_FIELDS; }
     int getRow() { return mRow; }
     int getCol() { return mCol; }
 
@@ -31,42 +36,39 @@ class Spot {
         mView = v;
     }
 
-    void setAsMine() {
-        mMine = true;
-    }
-
     void setNeighboringMines(int neighboringMines) {
-        mNeighboringMines = neighboringMines;
+        mState &= -113;
+        mState += (neighboringMines << BOOL_FIELDS);
     }
 
     void sweep() {
-        if(mFlagged || mRevealed) { return; }
+        if(get(FLAGGED) || get(REVEALED)) { return; }
 
-        mRevealed = true;
-        if (mMine) {
-            mExploded = true;
+        set(REVEALED, true);
+        if (get(MINE)) {
+            set(EXPLODED, true);
         }
 
-        updateState(SWEPT);
+        updateState(SWEEP_ACTION);
     }
 
     void reveal() {
-        mRevealed = true;
+        set(REVEALED, true);
         mView.update();
     }
 
     void reset() {
-        mFlagged = false;
-        mRevealed = false;
-        mExploded = false;
-        mMine = false;
+        set(MINE, false);
+        set(REVEALED, false);
+        set(FLAGGED, false);
+        set(EXPLODED, false);
         mView.update();
     }
 
     void flag() {
-        if(mRevealed) { return; }
-        mFlagged = !mFlagged;
-        updateState(FLAGGED);
+        if(get(REVEALED)) { return; }
+        set(FLAGGED, !get(FLAGGED));
+        updateState(FLAG_ACTION);
     }
 
     private void updateState(int action) {
