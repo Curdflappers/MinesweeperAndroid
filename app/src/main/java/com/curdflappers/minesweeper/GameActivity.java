@@ -25,7 +25,7 @@ public class GameActivity extends AppCompatActivity
     private ViewGroup mRootLayout;
     private RelativeLayout mFieldView;
     private int mFieldWidth, mFieldHeight, mRotation;
-    private Game game;
+    private static Game game;
     private Handler mHandler;
     private int mInterval = 250; // time delay to update timer (too long makes it skip)
     private long mStartTime = 0L;
@@ -60,7 +60,6 @@ public class GameActivity extends AppCompatActivity
         mHandler = new Handler();
         mTimerView = findViewById(R.id.timer_view);
         mMinesLeftView = findViewById(R.id.mines_left_view);
-        game = new Game(this);
         if(mSoundHelper == null) {
             mSoundHelper = new SoundHelper(this);
             mSoundHelper.prepareMusicPlayer(this);
@@ -97,6 +96,7 @@ public class GameActivity extends AppCompatActivity
                     }
                 });
 
+        if(game == null) game = new Game(this);
         // Set up static array of spots
         if(spotViews == null) {
             int rows = Config.getRows(), cols = Config.getCols();
@@ -104,9 +104,11 @@ public class GameActivity extends AppCompatActivity
             for (int r = 0; r < rows; r++) {
                 for (int c = 0; c < cols; c++) {
                     spotViews[r][c] = new SpotView(this);
+                    connectSpot(spotViews[r][c], r, c);
                 }
             }
         }
+
 
         mRotation = ((WindowManager) getSystemService(WINDOW_SERVICE)).
                 getDefaultDisplay().getRotation();
@@ -168,7 +170,6 @@ public class GameActivity extends AppCompatActivity
             for (int c = 0; c < cols; c++) {
                 sizeAndPosition(spotViews[r][c], sideLength, x + offsetX, y + offsetY);
                 mFieldView.addView(spotViews[r][c]);
-                //connectSpot(spotViews[r][c], r, c);
                 x += sideLength;
             }
             x = 0;
