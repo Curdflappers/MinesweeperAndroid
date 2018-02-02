@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,8 +22,9 @@ import java.util.Locale;
 public class GameActivity extends AppCompatActivity
         implements Game.GameListener {
 
-    private RelativeLayout minefield;
-    private int minefieldWidth, minefieldHeight;
+    private ViewGroup mRootLayout;
+    private RelativeLayout mFieldView;
+    private int mFieldWidth, mFieldHeight, mRotation;
     private Game game;
     private Handler mHandler;
     private int mInterval = 250; // time delay to update timer (too long makes it skip)
@@ -31,6 +33,7 @@ public class GameActivity extends AppCompatActivity
     private ModeButtonView mModeButton;
     public static SoundHelper mSoundHelper;
     private boolean mGamePlaying;
+    private static SpotView[][] spotViews;
     private Runnable mTimerRunnable = new Runnable() {
         @Override
         public void run() {
@@ -49,10 +52,11 @@ public class GameActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+        mRootLayout = findViewById(R.id.activity_game);
         setToFullScreen();
         HighScoreHelper.clearTopScores(this);
 
-        minefield = findViewById(R.id.minefield);
+        mFieldView = findViewById(R.id.minefield);
         mHandler = new Handler();
         mTimerView = findViewById(R.id.timer_view);
         mMinesLeftView = findViewById(R.id.mines_left_view);
@@ -93,16 +97,30 @@ public class GameActivity extends AppCompatActivity
                     }
                 });
 
-        ViewTreeObserver viewTreeObserver = minefield.getViewTreeObserver();
+        // Set up static array of spots
+        if(spotViews == null) {
+            int rows = Config.getRows(), cols = Config.getCols();
+            spotViews = new SpotView[rows][cols];
+            for (int r = 0; r < rows; r++) {
+                for (int c = 0; c < cols; c++) {
+                    spotViews[r][c] = new SpotView(this);
+                }
+            }
+        }
+
+        mRotation = ((WindowManager) getSystemService(WINDOW_SERVICE)).
+                getDefaultDisplay().getRotation();
+
+        ViewTreeObserver viewTreeObserver = mFieldView.getViewTreeObserver();
         if (viewTreeObserver.isAlive()) {
             viewTreeObserver.addOnGlobalLayoutListener(
                     new ViewTreeObserver.OnGlobalLayoutListener() {
                         @Override
                         public void onGlobalLayout() {
-                            minefield.getViewTreeObserver().
+                            mFieldView.getViewTreeObserver().
                                     removeOnGlobalLayoutListener(this);
-                            minefieldWidth = minefield.getWidth();
-                            minefieldHeight = minefield.getHeight();
+                            mFieldWidth = mFieldView.getWidth();
+                            mFieldHeight = mFieldView.getHeight();
                             showMineField();
                         }
                     });
@@ -138,25 +156,32 @@ public class GameActivity extends AppCompatActivity
 
         // Set up visual formatting
         int sideLength =
-                Math.min(minefieldWidth / cols, minefieldHeight / rows);
-        if (sideLength < minefieldWidth / cols) { // horizontal offset
-            offsetX = (minefieldWidth - sideLength * cols) / 2;
+                Math.min(mFieldWidth / cols, mFieldHeight / rows);
+        if (sideLength < mFieldWidth / cols) { // horizontal offset
+            offsetX = (mFieldWidth - sideLength * cols) / 2;
         } else { // vertical offset
-            offsetY = (minefieldHeight - sideLength * rows) / 2;
+            offsetY = (mFieldHeight - sideLength * rows) / 2;
         }
 
         // Place the spot views
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {
-                SpotView spotView = new SpotView(
-                        this, sideLength, x + offsetX, y + offsetY);
-                minefield.addView(spotView);
-                connectSpot(spotView, r, c);
+                sizeAndPosition(spotViews[r][c], sideLength, x + offsetX, y + offsetY);
+                mFieldView.addView(spotViews[r][c]);
+                //connectSpot(spotViews[r][c], r, c);
                 x += sideLength;
             }
             x = 0;
             y += sideLength;
         }
+    }
+
+    private void sizeAndPosition(SpotView view, int sideLength, int x, int y) {
+        RelativeLayout.LayoutParams params =
+                new RelativeLayout.LayoutParams(sideLength, sideLength);
+        view.setLayoutParams(params);
+        view.setX(x);
+        view.setY(y);
     }
 
     @Override
@@ -252,5 +277,10 @@ public class GameActivity extends AppCompatActivity
 
     private void stopTimer() {
         mHandler.removeCallbacks(mTimerRunnable);
+    }
+
+    protected void onSaveInstanceState(Bundle bundle) {
+        mFieldView.removeAllViews();
+        super.onSaveInstanceState(bundle);
     }
 }
