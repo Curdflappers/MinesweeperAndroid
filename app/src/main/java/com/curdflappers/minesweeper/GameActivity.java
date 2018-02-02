@@ -27,7 +27,7 @@ public class GameActivity extends AppCompatActivity
     private static Game game;
     private Handler mHandler;
     private int mInterval = 250; // time delay to update timer (too long makes it skip)
-    private long mStartTime = 0L;
+    private long mStartTime;
     private TextView mTimerView, mMinesLeftView;
     private ModeButtonView mModeButton;
     public static SoundHelper mSoundHelper;
@@ -63,6 +63,11 @@ public class GameActivity extends AppCompatActivity
             mSoundHelper.prepareMusicPlayer(this);
         }
 
+        if(savedInstanceState != null) {
+            mStartTime = savedInstanceState.getLong("startTime");
+            mGamePlaying = savedInstanceState.getBoolean("gamePlaying");
+            if(mGamePlaying) { startTimer(); }
+        }
 
         findViewById(R.id.reset_button).setOnClickListener(
                 new View.OnClickListener() {
@@ -114,16 +119,16 @@ public class GameActivity extends AppCompatActivity
         ViewTreeObserver viewTreeObserver = mFieldView.getViewTreeObserver();
         if (viewTreeObserver.isAlive()) {
             viewTreeObserver.addOnGlobalLayoutListener(
-                    new ViewTreeObserver.OnGlobalLayoutListener() {
-                        @Override
-                        public void onGlobalLayout() {
-                            mFieldView.getViewTreeObserver().
-                                    removeOnGlobalLayoutListener(this);
-                            mFieldWidth = mFieldView.getWidth();
-                            mFieldHeight = mFieldView.getHeight();
-                            showMineField();
-                        }
-                    });
+                new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        mFieldView.getViewTreeObserver().
+                                removeOnGlobalLayoutListener(this);
+                        mFieldWidth = mFieldView.getWidth();
+                        mFieldHeight = mFieldView.getHeight();
+                        showMineField();
+                    }
+            });
         }
 
         findViewById(R.id.activity_game).setOnSystemUiVisibilityChangeListener(
@@ -133,8 +138,6 @@ public class GameActivity extends AppCompatActivity
                     setToFullScreen();
             }
         });
-
-        mGamePlaying = false;
     }
 
     private void updateTimer() {
@@ -307,5 +310,13 @@ public class GameActivity extends AppCompatActivity
 
     private void stopTimer() {
         mHandler.removeCallbacks(mTimerRunnable);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putLong("startTime", mStartTime);
+        outState.putBoolean("gamePlaying", mGamePlaying);
+
+        super.onSaveInstanceState(outState);
     }
 }
