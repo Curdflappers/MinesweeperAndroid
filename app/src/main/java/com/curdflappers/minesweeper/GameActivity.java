@@ -153,39 +153,63 @@ public class GameActivity extends AppCompatActivity
     private void showMineField() {
         int sideLength, offset;
         int rows = Config.getRows(), cols = Config.getCols();
+        boolean offsetX;
 
         // Set up visual formatting
         if(mRotation == 0) {
             sideLength = Math.min(mFieldWidth / cols, mFieldHeight / rows);
-            offset = (mFieldHeight - sideLength * rows) / 2;
+            if (sideLength < mFieldWidth / cols) { // horizontal offset
+                offset = (mFieldWidth - sideLength * cols) / 2;
+                offsetX = true;
+            } else { // vertical offset
+                offset = (mFieldHeight - sideLength * rows) / 2;
+                offsetX = false;
+            }
         } else {
             sideLength = Math.min(mFieldHeight / cols, mFieldWidth / rows);
-            offset = (mFieldWidth - sideLength * rows) / 2;
+            if (sideLength < mFieldWidth / rows) { // horizontal offset
+                offset = (mFieldWidth - sideLength * rows) / 2;
+                offsetX = true;
+            } else { // vertical offset
+                offset = (mFieldHeight - sideLength * cols) / 2;
+                offsetX = false;
+            }
         }
 
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {
-                sizeAndPosition(spotViews[r][c], sideLength, r, c, offset);
+                sizeAndPosition(spotViews[r][c],
+                        sideLength, r, c, offset, offsetX);
                 mFieldView.addView(spotViews[r][c]);
             }
         }
     }
 
-    private void sizeAndPosition(
-            SpotView view, int sideLength, int r, int c, int offset) {
+    private void sizeAndPosition(SpotView view,
+                                 int sideLength,
+                                 int row,
+                                 int col,
+                                 int offset,
+                                 boolean offsetX) {
         RelativeLayout.LayoutParams params =
                 new RelativeLayout.LayoutParams(sideLength, sideLength);
         view.setLayoutParams(params);
 
         if(mRotation == 0) {
-            view.setX(c * sideLength);
-            view.setY(r * sideLength + offset);
+            view.setX(col * sideLength);
+            view.setY(row * sideLength);
         } else if(mRotation == 1) {
-            view.setX(r * sideLength + offset);
-            view.setY(mFieldHeight - sideLength * (c + 1));
+            view.setX(row * sideLength);
+            view.setY(mFieldHeight - sideLength * (col + 1));
         } else {
-            view.setX((Config.getRows() - r - 1) * sideLength + offset);
-            view.setY(c * sideLength);
+            view.setX((Config.getRows() - row - 1) * sideLength);
+            view.setY(col * sideLength);
+        }
+
+        if(offsetX) {
+            view.setX(view.getX() + offset);
+        } else {
+            view.setY(view.getY() + (mRotation == 1 ? -offset : offset));
         }
     }
 
