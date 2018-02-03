@@ -32,7 +32,7 @@ public class GameActivity extends AppCompatActivity
     private TextView mMinesLeftView;
     private ModeButtonView mModeButton;
     public static SoundHelper mSoundHelper;
-    private boolean mGamePlaying;
+    private static boolean mGamePlaying;
     private static SpotView[][] spotViews;
     private static Runnable mTimerRunnable = new Runnable() {
         @Override
@@ -47,6 +47,10 @@ public class GameActivity extends AppCompatActivity
             }
         }
     };
+
+    private void setGamePlaying(boolean playing) {
+        mGamePlaying = playing;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,11 +68,7 @@ public class GameActivity extends AppCompatActivity
             mSoundHelper.prepareMusicPlayer(this);
         }
 
-        if(savedInstanceState != null) {
-            mStartTime = savedInstanceState.getLong("startTime");
-            mGamePlaying = savedInstanceState.getBoolean("gamePlaying");
-            if(mGamePlaying) { startTimer(); }
-        }
+        if(mGamePlaying) { startTimer(); }
 
         findViewById(R.id.reset_button).setOnClickListener(
                 new View.OnClickListener() {
@@ -249,14 +249,14 @@ public class GameActivity extends AppCompatActivity
 
     @Override
     public void gameStart() {
-        mGamePlaying = true;
+        setGamePlaying(true);
         startTimer();
         mSoundHelper.playMusic();
     }
 
     @Override
     public void gameOver(boolean win) {
-        mGamePlaying = false;
+        setGamePlaying(false);
         stopTimer();
         mSoundHelper.pauseMusic();
         int score = (int)((System.currentTimeMillis() - mStartTime) / 1000);
@@ -283,7 +283,7 @@ public class GameActivity extends AppCompatActivity
     @SuppressLint("SetTextI18n")
     @Override
     public void gameReset() {
-        mGamePlaying = false;
+        setGamePlaying(false);
         mModeButton.setImageResource(R.drawable.mine_icon);
         stopTimer();
         mSoundHelper.pauseMusic();
@@ -311,13 +311,5 @@ public class GameActivity extends AppCompatActivity
 
     private void stopTimer() {
         mHandler.removeCallbacks(mTimerRunnable);
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        outState.putLong("startTime", mStartTime);
-        outState.putBoolean("gamePlaying", mGamePlaying);
-
-        super.onSaveInstanceState(outState);
     }
 }
