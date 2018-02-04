@@ -23,19 +23,35 @@ A streamlined implementation of the classic game, made with Android Studio. Cont
 
 - Music and sound effects
 
-**Amibitious elements**
-
 - Support device rotation
 
-- Save games between sessions
+**Currently in development**
 
-- Different game modes!
-  - Infinite Sweeper: Field gets denser as you venture from the center
-  - No-Flag Mode: Challenge yourself by clearing the field without flags
-  - Valley Sweeper: Fixed number of rows, start at the left and work your way down infinite columns
-  
+- Save games/preferences between sessions
+
+**Roadmap**
+
+v1.0
+- Better user configurations
+  - Drag a slider and get a preview of the spot size without manually editing rows, cols
+  - Choose minefield density instead of mine count
+
+v1.1
 - Autosolver!
   - Watch a computer solve the field
 
 - Hints
   - Use autosolver functionality to request help whenever you're stuck
+
+v1.2
+- More flags!
+  - Use multiple flag colors to match your playstyle
+  
+- Hide the status bar
+  - Make your entire screen a minefield with no distractions!
+  
+v1.3
+- Different game modes!
+  - Infinite Sweeper: Field gets denser as you venture from the center
+  - No-Flag Mode: Challenge yourself by clearing the field without flags
+  - Valley Sweeper: Fixed number of rows, start at the left and work your way down infinite columns
