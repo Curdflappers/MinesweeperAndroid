@@ -63,13 +63,13 @@ public class Game implements View.OnClickListener, View.OnLongClickListener,
 
     @Override
     public void onClick(View view) {
-        doAction(((SpotView)view).spot, sweepMode);
+        doAction(((SpotView)view).getSpot(), sweepMode);
     }
 
     @Override
     public boolean onLongClick(View view) {
         if(gameOver) reset();
-        else doAction(((SpotView)view).spot, !sweepMode);
+        else doAction(((SpotView)view).getSpot(), !sweepMode);
 
         vibrate();
         return true;
@@ -267,6 +267,14 @@ public class Game implements View.OnClickListener, View.OnLongClickListener,
 
     void setListener(GameListener listener) {
         this.listener = listener;
+    }
+
+    int getRows() {
+        return mSpots.length;
+    }
+
+    public int getCols() {
+        return mSpots[0].length;
     }
 
     interface GameListener {

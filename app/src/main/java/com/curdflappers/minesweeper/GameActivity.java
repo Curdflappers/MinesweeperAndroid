@@ -24,19 +24,20 @@ public class GameActivity extends AppCompatActivity
 
     private RelativeLayout mFieldView;
     private TextView mTimerView, mMinesLeftView;
-    private int mFieldWidth, mFieldHeight, mRotation;
-    private Handler mHandler;
-    private static Game game;
-    private static final int INTERVAL = 250; // time delay to update timer (too long makes it skip)
-    private static long mStartTime;
     private ModeButtonView mModeButton;
+    private SpotView[][] spotViews;
+    private Handler mHandler;
+    private int mFieldWidth, mFieldHeight, mRotation;
+    private static Game game;
+    private static long mStartTime;
     public static SoundHelper mSoundHelper;
     private static boolean mGamePlaying;
-    private static SpotView[][] spotViews;
     private Runnable mTimerRunnable = new Runnable() {
+        private static final int INTERVAL = 250;
+
         @Override
         public void run() {
-            if(mGamePlaying) {
+            if (mGamePlaying) {
                 if (mStartTime == 0L) {
                     mStartTime = System.currentTimeMillis();
                 }
@@ -63,14 +64,33 @@ public class GameActivity extends AppCompatActivity
         mFieldView = findViewById(R.id.minefield);
         mTimerView = findViewById(R.id.timer_view);
         mMinesLeftView = findViewById(R.id.mines_left_view);
+        mModeButton = findViewById(R.id.mode_button);
+
+        if (game == null) {
+            game = new Game(this);
+        } else {
+            game.setListener(this);
+        }
+
+        int rows = game.getRows(), cols = game.getCols();
+        spotViews = new SpotView[rows][cols];
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < cols; c++) {
+                spotViews[r][c] = new SpotView(this);
+                connectSpot(spotViews[r][c], r, c);
+            }
+        }
+
         mHandler = new Handler();
 
-        if(mSoundHelper == null) {
+        if (mSoundHelper == null) {
             mSoundHelper = new SoundHelper(this);
             mSoundHelper.prepareMusicPlayer(this);
         }
 
-        if(mGamePlaying) { startTimer(); }
+        if (mGamePlaying) {
+            startTimer();
+        }
 
         findViewById(R.id.reset_button).setOnClickListener(
                 new View.OnClickListener() {
@@ -81,7 +101,6 @@ public class GameActivity extends AppCompatActivity
                 });
 
 
-        mModeButton = findViewById(R.id.mode_button);
         mModeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -102,68 +121,53 @@ public class GameActivity extends AppCompatActivity
                     }
                 });
 
-        if(game == null) game = new Game(this);
-        game.setListener(this);
-        // Set up static array of spots
-        if(spotViews == null) {
-            int rows = Config.getRows(), cols = Config.getCols();
-            spotViews = new SpotView[rows][cols];
-            for (int r = 0; r < rows; r++) {
-                for (int c = 0; c < cols; c++) {
-                    spotViews[r][c] = new SpotView(this);
-                    connectSpot(spotViews[r][c], r, c);
-                }
-            }
-        }
-
-
         mRotation = ((WindowManager) getSystemService(WINDOW_SERVICE)).
                 getDefaultDisplay().getRotation();
 
         ViewTreeObserver viewTreeObserver = mFieldView.getViewTreeObserver();
         if (viewTreeObserver.isAlive()) {
             viewTreeObserver.addOnGlobalLayoutListener(
-                new ViewTreeObserver.OnGlobalLayoutListener() {
-                    @Override
-                    public void onGlobalLayout() {
-                        mFieldView.getViewTreeObserver().
-                                removeOnGlobalLayoutListener(this);
-                        mFieldWidth = mFieldView.getWidth();
-                        mFieldHeight = mFieldView.getHeight();
-                        showMineField();
-                    }
-            });
+                    new ViewTreeObserver.OnGlobalLayoutListener() {
+                        @Override
+                        public void onGlobalLayout() {
+                            mFieldView.getViewTreeObserver().
+                                    removeOnGlobalLayoutListener(this);
+                            mFieldWidth = mFieldView.getWidth();
+                            mFieldHeight = mFieldView.getHeight();
+                            showField();
+                        }
+                    });
         }
 
         findViewById(R.id.activity_game).setOnSystemUiVisibilityChangeListener(
                 new View.OnSystemUiVisibilityChangeListener() {
-            @Override
-            public void onSystemUiVisibilityChange(int i) {
-                    setToFullScreen();
-            }
-        });
+                    @Override
+                    public void onSystemUiVisibilityChange(int i) {
+                        setToFullScreen();
+                    }
+                });
     }
 
     private void updateTimer() {
         long millisElapsed = (int) (System.currentTimeMillis() - mStartTime);
-        mTimerView.setText(timeFormat((int)millisElapsed/1000));
+        mTimerView.setText(timeFormat((int) millisElapsed / 1000));
     }
 
     private void connectSpot(SpotView view, int row, int col) {
         Spot spot = game.getSpots()[row][col];
-        view.spot = spot;
+        view.setSpot(spot);
         spot.setView(view);
         view.setOnClickListener(game);
         view.setOnLongClickListener(game);
     }
 
-    private void showMineField() {
+    private void showField() {
         int sideLength, offset;
-        int rows = Config.getRows(), cols = Config.getCols();
+        int rows = game.getRows(), cols = game.getCols();
         boolean offsetX;
 
         // Set up visual formatting
-        if(mRotation == 0) {
+        if (mRotation == 0) {
             sideLength = Math.min(mFieldWidth / cols, mFieldHeight / rows);
             if (sideLength < mFieldWidth / cols) { // horizontal offset
                 offset = (mFieldWidth - sideLength * cols) / 2;
@@ -202,10 +206,10 @@ public class GameActivity extends AppCompatActivity
                 new RelativeLayout.LayoutParams(sideLength, sideLength);
         view.setLayoutParams(params);
 
-        if(mRotation == 0) {
+        if (mRotation == 0) {
             view.setX(col * sideLength);
             view.setY(row * sideLength);
-        } else if(mRotation == 1) {
+        } else if (mRotation == 1) {
             view.setX(row * sideLength);
             view.setY(mFieldHeight - sideLength * (col + 1));
         } else {
@@ -213,7 +217,7 @@ public class GameActivity extends AppCompatActivity
             view.setY(col * sideLength);
         }
 
-        if(offsetX) {
+        if (offsetX) {
             view.setX(view.getX() + offset);
         } else {
             view.setY(view.getY() + (mRotation == 1 ? -offset : offset));
@@ -230,7 +234,7 @@ public class GameActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         setToFullScreen();
-        if(mGamePlaying) mSoundHelper.playMusic();
+        if (mGamePlaying) mSoundHelper.playMusic();
     }
 
     @Override
@@ -262,8 +266,8 @@ public class GameActivity extends AppCompatActivity
         setGamePlaying(false);
         stopTimer();
         mSoundHelper.pauseMusic();
-        int score = (int)((System.currentTimeMillis() - mStartTime) / 1000);
-        if(win) {
+        int score = (int) ((System.currentTimeMillis() - mStartTime) / 1000);
+        if (win) {
             Toast.makeText(this, "You win!",
                     Toast.LENGTH_SHORT).show();
             int diffCode = Config.getPresetDifficulty();
@@ -302,7 +306,7 @@ public class GameActivity extends AppCompatActivity
     }
 
     private static String timeFormat(int seconds) {
-        int minutes = seconds/60;
+        int minutes = seconds / 60;
         seconds %= 60;
         return String.format(Locale.getDefault(),
                 "%02d:%02d", minutes, seconds);

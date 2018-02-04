@@ -10,11 +10,20 @@ import static com.curdflappers.minesweeper.Spot.MINE;
 import static com.curdflappers.minesweeper.Spot.REVEALED;
 
 public class SpotView extends AppCompatImageView {
-    public Spot spot;
 
+    Spot spot;
     public SpotView(Context context) {
         super(context);
         setImageResource(R.drawable.unrevealed);
+    }
+
+    public Spot getSpot() {
+        return spot;
+    }
+
+    public void setSpot(Spot spot) {
+        this.spot = spot;
+        update();
     }
 
     public void update() {
