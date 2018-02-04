@@ -3,7 +3,7 @@ package com.curdflappers.minesweeper;
 import com.curdflappers.minesweeper.utils.Difficulty;
 
 public class Config {
-    private static final int MAX_ROWS = 40, MAX_COLS = 24;
+    private static final int MAX_LONGER = 40, MAX_SHORTER = 24;
     static final String INVALID_ENTRY =
             "Invalid entry, must be between 1 and %d, inclusive";
 
@@ -11,7 +11,7 @@ public class Config {
             BEGINNER = new Difficulty(9, 9, 10),
             INTERMEDIATE = new Difficulty(16, 16, 40),
             EXPERT = new Difficulty(16, 16, 99),
-            ENDURANCE = new Difficulty(40, 24, 192);
+            ENDURANCE = new Difficulty(MAX_LONGER, MAX_SHORTER, 192);
 
     @SuppressWarnings("WeakerAccess")
     public static final int CUSTOM = -1,
@@ -20,19 +20,28 @@ public class Config {
             PRESET_EXPERT = 2,
             PRESET_ENDURANCE = 3;
 
-    private static int rows = ENDURANCE.getRows(),
-            cols = ENDURANCE.getCols(),
+    private static int longer = ENDURANCE.getLonger(),
+            shorter = ENDURANCE.getShorter(),
             mines = ENDURANCE.getMines();
-    static final int ROWS = 0, COLS = 1, MINES = 2;
+    static final int LONGER = 0, SHORTER = 1, MINES = 2;
     private static ConfigListener listener;
 
-    static int getRows() { return rows; }
-    static int getCols() { return cols; }
-    static int getMines() { return mines; }
-
-    private static Difficulty getDifficulty() {
-        return new Difficulty(getRows(), getCols(), getMines());
+    static int getLonger() {
+        return longer;
     }
+
+    static int getShorter() {
+        return shorter;
+    }
+
+    static int getMines() {
+        return mines;
+    }
+
+    static Difficulty getDifficulty() {
+        return new Difficulty(getLonger(), getShorter(), getMines());
+    }
+
     static int getPresetDifficulty() {
         Difficulty difficulty = getDifficulty();
         if (difficulty.equals(BEGINNER)) {
@@ -47,36 +56,45 @@ public class Config {
             return CUSTOM;
         }
     }
+
     static void setDifficulty(Difficulty difficulty) {
-        setRows(difficulty.getRows());
-        setCols(difficulty.getCols());
+        setLonger(difficulty.getLonger());
+        setShorter(difficulty.getShorter());
         setMines(difficulty.getMines());
     }
 
-    private static boolean setRows(int r) {
-        if(r <= MAX_ROWS && r > 0
-                && (cols > 1 || r > 1)) {
-            rows = r;
+    private static boolean setLonger(int l) {
+        if (l > MAX_LONGER) return false;
+
+        if (l < shorter) {
+            setLonger(shorter);
+            setShorter(l);
+        } if (l > 0 && (shorter > 1 || l > 1)) { // can't be 1x1
+            longer = l;
             setMines(Math.min(mines, maxMines()));
-            notifyListener(ROWS, rows);
+            notifyListener(LONGER, longer);
             return true;
         }
         return false;
     }
 
-    private static boolean setCols(int c) {
-        if(c <= MAX_COLS && c > 0
-                && (rows > 1 || c > 1)) {
-            cols = c;
+    private static boolean setShorter(int s) {
+        if (s > MAX_SHORTER) return false;
+
+        if (s > longer) {
+            setShorter(longer);
+            setLonger(s);
+        } if (s > 0 && (longer > 1 || s > 1)) {
+            shorter = s;
             setMines(Math.min(mines, maxMines()));
-            notifyListener(COLS, cols);
+            notifyListener(SHORTER, shorter);
             return true;
         }
         return false;
     }
 
     private static boolean setMines(int m) {
-        if(m > 0 && m <= maxMines()) {
+        if (m > 0 && m <= maxMines()) {
             mines = m;
             notifyListener(MINES, mines);
             return true;
@@ -85,18 +103,20 @@ public class Config {
     }
 
     private static int maxMines() {
-        return rows * cols - 1;
+        return longer * shorter - 1;
     }
 
-    static void setListener(ConfigListener l) { listener = l; }
+    static void setListener(ConfigListener l) {
+        listener = l;
+    }
 
     private static void notifyListener(int field, int value) {
         if (listener == null) return;
-        switch(field) {
-            case ROWS:
+        switch (field) {
+            case LONGER:
                 listener.rowsChanged(value);
                 break;
-            case COLS:
+            case SHORTER:
                 listener.colsChanged(value);
                 break;
             case MINES:
@@ -106,11 +126,11 @@ public class Config {
     }
 
     static int getField(int field) {
-        switch(field) {
-            case ROWS:
-                return getRows();
-            case COLS:
-                return getCols();
+        switch (field) {
+            case LONGER:
+                return getLonger();
+            case SHORTER:
+                return getShorter();
             case MINES:
                 return getMines();
         }
@@ -118,11 +138,11 @@ public class Config {
     }
 
     public static boolean setField(int field, int value) {
-        switch(field) {
-            case Config.ROWS:
-                return Config.setRows(value);
-            case Config.COLS:
-                return Config.setCols(value);
+        switch (field) {
+            case Config.LONGER:
+                return Config.setLonger(value);
+            case Config.SHORTER:
+                return Config.setShorter(value);
             case Config.MINES:
                 return Config.setMines(value);
         }
@@ -131,10 +151,10 @@ public class Config {
 
     static int getMax(int field) {
         switch (field) {
-            case Config.ROWS:
-                return Config.MAX_ROWS;
-            case Config.COLS:
-                return Config.MAX_COLS;
+            case Config.LONGER:
+                return Config.MAX_LONGER;
+            case Config.SHORTER:
+                return Config.MAX_SHORTER;
             case Config.MINES:
                 return Config.maxMines();
         }
@@ -143,7 +163,9 @@ public class Config {
 
     interface ConfigListener {
         void rowsChanged(int rows);
+
         void colsChanged(int cols);
+
         void minesChanged(int mines);
     }
 }

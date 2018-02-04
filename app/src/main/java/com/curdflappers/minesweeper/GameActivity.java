@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,29 +22,38 @@ import java.util.Locale;
 public class GameActivity extends AppCompatActivity
         implements Game.GameListener {
 
-    private RelativeLayout minefield;
-    private int minefieldWidth, minefieldHeight;
-    private Game game;
-    private Handler mHandler;
-    private int mInterval = 250; // time delay to update timer (too long makes it skip)
-    private long mStartTime = 0L;
+    private RelativeLayout mFieldView;
     private TextView mTimerView, mMinesLeftView;
     private ModeButtonView mModeButton;
+    private SpotView[][] spotViews;
+    private Handler mHandler;
+    private int mFieldWidth, mFieldHeight, mRotation;
+    private static Game game;
+    private static long mStartTime;
     public static SoundHelper mSoundHelper;
-    private boolean mGamePlaying;
+    private static boolean mGamePlaying;
+    private static final String TIMER = "timer", MINES = "mines";
     private Runnable mTimerRunnable = new Runnable() {
+        private static final int INTERVAL = 250;
+
         @Override
         public void run() {
-            if (mStartTime == 0L) {
-                mStartTime = System.currentTimeMillis();
-            }
-            try {
-                updateTimer();
-            } finally {
-                mHandler.postDelayed(mTimerRunnable, mInterval);
+            if (mGamePlaying) {
+                if (mStartTime == 0L) {
+                    mStartTime = System.currentTimeMillis();
+                }
+                try {
+                    updateTimer();
+                } finally {
+                    mHandler.postDelayed(mTimerRunnable, INTERVAL);
+                }
             }
         }
     };
+
+    private void setGamePlaying(boolean playing) {
+        mGamePlaying = playing;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,12 +62,41 @@ public class GameActivity extends AppCompatActivity
         setToFullScreen();
         HighScoreHelper.clearTopScores(this);
 
-        minefield = findViewById(R.id.minefield);
-        mHandler = new Handler();
+        mFieldView = findViewById(R.id.minefield);
         mTimerView = findViewById(R.id.timer_view);
         mMinesLeftView = findViewById(R.id.mines_left_view);
-        game = new Game(this);
-        if(mSoundHelper == null) {
+        mModeButton = findViewById(R.id.mode_button);
+        mHandler = new Handler();
+        mRotation = ((WindowManager) getSystemService(WINDOW_SERVICE)).
+                getDefaultDisplay().getRotation();
+
+        // Set up the game
+        if (game == null) {
+            game = new Game(this);
+        } else {
+            game.setListener(this);
+        }
+        if (mGamePlaying) startTimer();
+
+        // Set up the spot views
+        int rows = game.getRows(), cols = game.getCols();
+        spotViews = new SpotView[rows][cols];
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < cols; c++) {
+                spotViews[r][c] = new SpotView(this);
+                connectSpot(spotViews[r][c], r, c);
+            }
+        }
+
+        // Set up status bar
+        if(savedInstanceState != null) {
+            mTimerView.setText(savedInstanceState.getString(TIMER));
+            mMinesLeftView.setText(savedInstanceState.getString(MINES));
+            updateModeButton();
+        }
+
+        // Set up the sound helper
+        if (mSoundHelper == null) {
             mSoundHelper = new SoundHelper(this);
             mSoundHelper.prepareMusicPlayer(this);
         }
@@ -72,14 +111,11 @@ public class GameActivity extends AppCompatActivity
                 });
 
 
-        mModeButton = findViewById(R.id.mode_button);
         mModeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 game.toggleMode();
-                if (game.getSweepMode())
-                    mModeButton.setImageResource(R.drawable.mine_icon);
-                else mModeButton.setImageResource(R.drawable.flag_icon);
+                updateModeButton();
             }
         });
 
@@ -93,69 +129,109 @@ public class GameActivity extends AppCompatActivity
                     }
                 });
 
-        ViewTreeObserver viewTreeObserver = minefield.getViewTreeObserver();
+        ViewTreeObserver viewTreeObserver = mFieldView.getViewTreeObserver();
         if (viewTreeObserver.isAlive()) {
             viewTreeObserver.addOnGlobalLayoutListener(
                     new ViewTreeObserver.OnGlobalLayoutListener() {
                         @Override
                         public void onGlobalLayout() {
-                            minefield.getViewTreeObserver().
+                            mFieldView.getViewTreeObserver().
                                     removeOnGlobalLayoutListener(this);
-                            minefieldWidth = minefield.getWidth();
-                            minefieldHeight = minefield.getHeight();
-                            showMineField();
+                            mFieldWidth = mFieldView.getWidth();
+                            mFieldHeight = mFieldView.getHeight();
+                            showField();
                         }
                     });
         }
 
         findViewById(R.id.activity_game).setOnSystemUiVisibilityChangeListener(
                 new View.OnSystemUiVisibilityChangeListener() {
-            @Override
-            public void onSystemUiVisibilityChange(int i) {
-                    setToFullScreen();
-            }
-        });
+                    @Override
+                    public void onSystemUiVisibilityChange(int i) {
+                        setToFullScreen();
+                    }
+                });
+    }
 
-        mGamePlaying = false;
+    private void updateModeButton() {
+        if (game.getSweepMode())
+            mModeButton.setImageResource(R.drawable.mine_icon);
+        else mModeButton.setImageResource(R.drawable.flag_icon);
     }
 
     private void updateTimer() {
         long millisElapsed = (int) (System.currentTimeMillis() - mStartTime);
-        mTimerView.setText(timeFormat((int)millisElapsed/1000));
+        mTimerView.setText(timeFormat((int) millisElapsed / 1000));
     }
 
     private void connectSpot(SpotView view, int row, int col) {
         Spot spot = game.getSpots()[row][col];
-        view.spot = spot;
+        view.setSpot(spot);
         spot.setView(view);
         view.setOnClickListener(game);
         view.setOnLongClickListener(game);
     }
 
-    private void showMineField() {
-        int x = 0, y = 0, offsetX = 0, offsetY = 0;
-        int rows = Config.getRows(), cols = Config.getCols();
+    private void showField() {
+        int sideLength, offset;
+        int rows = game.getRows(), cols = game.getCols();
+        boolean offsetX;
 
         // Set up visual formatting
-        int sideLength =
-                Math.min(minefieldWidth / cols, minefieldHeight / rows);
-        if (sideLength < minefieldWidth / cols) { // horizontal offset
-            offsetX = (minefieldWidth - sideLength * cols) / 2;
-        } else { // vertical offset
-            offsetY = (minefieldHeight - sideLength * rows) / 2;
+        if (mRotation == 0) {
+            sideLength = Math.min(mFieldWidth / cols, mFieldHeight / rows);
+            if (sideLength < mFieldWidth / cols) { // horizontal offset
+                offset = (mFieldWidth - sideLength * cols) / 2;
+                offsetX = true;
+            } else { // vertical offset
+                offset = (mFieldHeight - sideLength * rows) / 2;
+                offsetX = false;
+            }
+        } else {
+            sideLength = Math.min(mFieldHeight / cols, mFieldWidth / rows);
+            if (sideLength < mFieldWidth / rows) { // horizontal offset
+                offset = (mFieldWidth - sideLength * rows) / 2;
+                offsetX = true;
+            } else { // vertical offset
+                offset = (mFieldHeight - sideLength * cols) / 2;
+                offsetX = false;
+            }
         }
 
-        // Place the spot views
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {
-                SpotView spotView = new SpotView(
-                        this, sideLength, x + offsetX, y + offsetY);
-                minefield.addView(spotView);
-                connectSpot(spotView, r, c);
-                x += sideLength;
+                sizeAndPosition(spotViews[r][c],
+                        sideLength, r, c, offset, offsetX);
+                mFieldView.addView(spotViews[r][c]);
             }
-            x = 0;
-            y += sideLength;
+        }
+    }
+
+    private void sizeAndPosition(SpotView view,
+                                 int sideLength,
+                                 int row,
+                                 int col,
+                                 int offset,
+                                 boolean offsetX) {
+        RelativeLayout.LayoutParams params =
+                new RelativeLayout.LayoutParams(sideLength, sideLength);
+        view.setLayoutParams(params);
+
+        if (mRotation == 0) {
+            view.setX(col * sideLength);
+            view.setY(row * sideLength);
+        } else if (mRotation == 1) {
+            view.setX(row * sideLength);
+            view.setY(mFieldHeight - sideLength * (col + 1));
+        } else {
+            view.setX((Config.getLonger() - row - 1) * sideLength);
+            view.setY(col * sideLength);
+        }
+
+        if (offsetX) {
+            view.setX(view.getX() + offset);
+        } else {
+            view.setY(view.getY() + (mRotation == 1 ? -offset : offset));
         }
     }
 
@@ -169,12 +245,13 @@ public class GameActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         setToFullScreen();
-        if(mGamePlaying) mSoundHelper.playMusic();
+        if (mGamePlaying) mSoundHelper.playMusic();
     }
 
     @Override
     public void onDestroy() {
         stopTimer();
+        mFieldView.removeAllViews();
         super.onDestroy();
     }
 
@@ -190,18 +267,18 @@ public class GameActivity extends AppCompatActivity
 
     @Override
     public void gameStart() {
-        mGamePlaying = true;
+        setGamePlaying(true);
         startTimer();
         mSoundHelper.playMusic();
     }
 
     @Override
     public void gameOver(boolean win) {
-        mGamePlaying = false;
+        setGamePlaying(false);
         stopTimer();
         mSoundHelper.pauseMusic();
-        int score = (int)((System.currentTimeMillis() - mStartTime) / 1000);
-        if(win) {
+        int score = (int) ((System.currentTimeMillis() - mStartTime) / 1000);
+        if (win) {
             Toast.makeText(this, "You win!",
                     Toast.LENGTH_SHORT).show();
             int diffCode = Config.getPresetDifficulty();
@@ -224,7 +301,7 @@ public class GameActivity extends AppCompatActivity
     @SuppressLint("SetTextI18n")
     @Override
     public void gameReset() {
-        mGamePlaying = false;
+        setGamePlaying(false);
         mModeButton.setImageResource(R.drawable.mine_icon);
         stopTimer();
         mSoundHelper.pauseMusic();
@@ -239,8 +316,8 @@ public class GameActivity extends AppCompatActivity
                 Locale.getDefault(), "%03d", minesLeft));
     }
 
-    private String timeFormat(int seconds) {
-        int minutes = seconds/60;
+    private static String timeFormat(int seconds) {
+        int minutes = seconds / 60;
         seconds %= 60;
         return String.format(Locale.getDefault(),
                 "%02d:%02d", minutes, seconds);
@@ -252,5 +329,18 @@ public class GameActivity extends AppCompatActivity
 
     private void stopTimer() {
         mHandler.removeCallbacks(mTimerRunnable);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(TIMER, mTimerView.getText().toString());
+        outState.putString(MINES, mMinesLeftView.getText().toString());
+    }
+
+    public static void reset() {
+        game = null;
+        mStartTime = 0L;
+        mGamePlaying = false;
     }
 }
