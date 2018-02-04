@@ -32,6 +32,7 @@ public class GameActivity extends AppCompatActivity
     private static long mStartTime;
     public static SoundHelper mSoundHelper;
     private static boolean mGamePlaying;
+    private static final String TIMER = "timer", MINES = "mines";
     private Runnable mTimerRunnable = new Runnable() {
         private static final int INTERVAL = 250;
 
@@ -65,13 +66,19 @@ public class GameActivity extends AppCompatActivity
         mTimerView = findViewById(R.id.timer_view);
         mMinesLeftView = findViewById(R.id.mines_left_view);
         mModeButton = findViewById(R.id.mode_button);
+        mHandler = new Handler();
+        mRotation = ((WindowManager) getSystemService(WINDOW_SERVICE)).
+                getDefaultDisplay().getRotation();
 
+        // Set up the game
         if (game == null) {
             game = new Game(this);
         } else {
             game.setListener(this);
         }
+        if (mGamePlaying) startTimer();
 
+        // Set up the spot views
         int rows = game.getRows(), cols = game.getCols();
         spotViews = new SpotView[rows][cols];
         for (int r = 0; r < rows; r++) {
@@ -81,16 +88,19 @@ public class GameActivity extends AppCompatActivity
             }
         }
 
-        mHandler = new Handler();
+        // Set up status bar
+        if(savedInstanceState != null) {
+            mTimerView.setText(savedInstanceState.getString(TIMER));
+            mMinesLeftView.setText(savedInstanceState.getString(MINES));
+            updateModeButton();
+        }
 
+        // Set up the sound helper
         if (mSoundHelper == null) {
             mSoundHelper = new SoundHelper(this);
             mSoundHelper.prepareMusicPlayer(this);
         }
 
-        if (mGamePlaying) {
-            startTimer();
-        }
 
         findViewById(R.id.reset_button).setOnClickListener(
                 new View.OnClickListener() {
@@ -105,9 +115,7 @@ public class GameActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 game.toggleMode();
-                if (game.getSweepMode())
-                    mModeButton.setImageResource(R.drawable.mine_icon);
-                else mModeButton.setImageResource(R.drawable.flag_icon);
+                updateModeButton();
             }
         });
 
@@ -120,9 +128,6 @@ public class GameActivity extends AppCompatActivity
                         startActivity(i);
                     }
                 });
-
-        mRotation = ((WindowManager) getSystemService(WINDOW_SERVICE)).
-                getDefaultDisplay().getRotation();
 
         ViewTreeObserver viewTreeObserver = mFieldView.getViewTreeObserver();
         if (viewTreeObserver.isAlive()) {
@@ -146,6 +151,12 @@ public class GameActivity extends AppCompatActivity
                         setToFullScreen();
                     }
                 });
+    }
+
+    private void updateModeButton() {
+        if (game.getSweepMode())
+            mModeButton.setImageResource(R.drawable.mine_icon);
+        else mModeButton.setImageResource(R.drawable.flag_icon);
     }
 
     private void updateTimer() {
@@ -318,5 +329,12 @@ public class GameActivity extends AppCompatActivity
 
     private void stopTimer() {
         mHandler.removeCallbacks(mTimerRunnable);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(TIMER, mTimerView.getText().toString());
+        outState.putString(MINES, mMinesLeftView.getText().toString());
     }
 }
