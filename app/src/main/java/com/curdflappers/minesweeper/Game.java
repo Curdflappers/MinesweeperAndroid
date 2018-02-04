@@ -265,6 +265,10 @@ public class Game implements View.OnClickListener, View.OnLongClickListener,
         }
     }
 
+    void setListener(GameListener listener) {
+        this.listener = listener;
+    }
+
     interface GameListener {
         void gameStart();
         void gameOver(boolean win);

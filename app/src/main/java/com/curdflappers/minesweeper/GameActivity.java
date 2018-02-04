@@ -23,27 +23,28 @@ public class GameActivity extends AppCompatActivity
         implements Game.GameListener {
 
     private RelativeLayout mFieldView;
+    private TextView mTimerView, mMinesLeftView;
     private int mFieldWidth, mFieldHeight, mRotation;
+    private Handler mHandler;
     private static Game game;
-    private static Handler mHandler = new Handler();
     private static final int INTERVAL = 250; // time delay to update timer (too long makes it skip)
     private static long mStartTime;
-    private static TextView mTimerView;
-    private TextView mMinesLeftView;
     private ModeButtonView mModeButton;
     public static SoundHelper mSoundHelper;
     private static boolean mGamePlaying;
     private static SpotView[][] spotViews;
-    private static Runnable mTimerRunnable = new Runnable() {
+    private Runnable mTimerRunnable = new Runnable() {
         @Override
         public void run() {
-            if (mStartTime == 0L) {
-                mStartTime = System.currentTimeMillis();
-            }
-            try {
-                updateTimer();
-            } finally {
-                mHandler.postDelayed(mTimerRunnable, INTERVAL);
+            if(mGamePlaying) {
+                if (mStartTime == 0L) {
+                    mStartTime = System.currentTimeMillis();
+                }
+                try {
+                    updateTimer();
+                } finally {
+                    mHandler.postDelayed(mTimerRunnable, INTERVAL);
+                }
             }
         }
     };
@@ -60,9 +61,10 @@ public class GameActivity extends AppCompatActivity
         HighScoreHelper.clearTopScores(this);
 
         mFieldView = findViewById(R.id.minefield);
-        mHandler = new Handler();
         mTimerView = findViewById(R.id.timer_view);
         mMinesLeftView = findViewById(R.id.mines_left_view);
+        mHandler = new Handler();
+
         if(mSoundHelper == null) {
             mSoundHelper = new SoundHelper(this);
             mSoundHelper.prepareMusicPlayer(this);
@@ -101,6 +103,7 @@ public class GameActivity extends AppCompatActivity
                 });
 
         if(game == null) game = new Game(this);
+        game.setListener(this);
         // Set up static array of spots
         if(spotViews == null) {
             int rows = Config.getRows(), cols = Config.getCols();
@@ -141,7 +144,7 @@ public class GameActivity extends AppCompatActivity
         });
     }
 
-    private static void updateTimer() {
+    private void updateTimer() {
         long millisElapsed = (int) (System.currentTimeMillis() - mStartTime);
         mTimerView.setText(timeFormat((int)millisElapsed/1000));
     }
