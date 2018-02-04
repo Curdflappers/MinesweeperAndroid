@@ -22,17 +22,15 @@ public class SoundHelper {
     public SoundHelper(Activity activity) {
         activity.setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
-        // Differs with versions older than Lollipop
         if (android.os.Build.VERSION.SDK_INT
-                >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                >= android.os.Build.VERSION_CODES.LOLLIPOP) { // LOLLIPOP or newer
             AudioAttributes audioAttrib = new AudioAttributes.Builder()
                     .setUsage(AudioAttributes.USAGE_GAME)
                     .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                     .build();
             mSoundPool = new SoundPool.Builder()
                     .setAudioAttributes(audioAttrib).setMaxStreams(6).build();
-        } else {
-            //noinspection deprecation
+        } else { // older than LOLLIPOP
             mSoundPool = new SoundPool(6, AudioManager.STREAM_MUSIC, 0);
         }
 
@@ -45,6 +43,8 @@ public class SoundHelper {
             }
         });
         mSoundID = mSoundPool.load(activity, R.raw.explosion, 1);
+
+        // Default sound volumes
         mSFXVolume = 0.5f;
         mMusicVolume = 0.5f;
     }
