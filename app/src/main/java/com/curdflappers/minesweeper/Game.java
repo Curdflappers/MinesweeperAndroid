@@ -38,7 +38,7 @@ public class Game implements View.OnClickListener, View.OnLongClickListener,
     }
 
     Game(GameListener listener) {
-        mSpots = new Spot[Config.getRows()][Config.getCols()];
+        mSpots = new Spot[Config.getLonger()][Config.getShorter()];
         mMines = Config.getMines();
         mMinefieldPopulated = false;
         for (int r = 0; r < mSpots.length; r++) {

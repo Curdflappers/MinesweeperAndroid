@@ -1,20 +1,25 @@
 package com.curdflappers.minesweeper.utils;
 
 public class Difficulty {
-    private int rows, cols, mines;
+    private int longer, shorter, mines;
 
-    public Difficulty(int r, int c, int m) {
-        rows = r;
-        cols = c;
+    public Difficulty(int l, int s, int m) {
+        if(l >= s) {
+            longer = l;
+            shorter = s;
+        }  else {
+            longer = s;
+            shorter = l;
+        }
         mines = m;
     }
 
-    public int getRows() {
-        return rows;
+    public int getLonger() {
+        return longer;
     }
 
-    public int getCols() {
-        return cols;
+    public int getShorter() {
+        return shorter;
     }
 
     public int getMines() {
@@ -25,8 +30,8 @@ public class Difficulty {
     public boolean equals(Object other) {
         if(other.getClass() == Difficulty.class) {
             Difficulty d = (Difficulty)other;
-            return rows == d.getRows()
-                    && cols == d.getCols()
+            return longer == d.getLonger()
+                    && shorter == d.getShorter()
                     && mines == d.getMines();
         }
         return false;

@@ -224,7 +224,7 @@ public class GameActivity extends AppCompatActivity
             view.setX(row * sideLength);
             view.setY(mFieldHeight - sideLength * (col + 1));
         } else {
-            view.setX((Config.getRows() - row - 1) * sideLength);
+            view.setX((Config.getLonger() - row - 1) * sideLength);
             view.setY(col * sideLength);
         }
 

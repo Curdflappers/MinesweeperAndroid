@@ -119,12 +119,12 @@ public class ConfigActivity extends AppCompatActivity
 
     private void setEdits() {
         rowsEdit = findViewById(R.id.rows_edit);
-        rowsEdit.setText(String.valueOf(Config.getRows()));
-        setListeners(rowsEdit, Config.ROWS);
+        rowsEdit.setText(String.valueOf(Config.getLonger()));
+        setListeners(rowsEdit, Config.LONGER);
 
         colsEdit = findViewById(R.id.columns_edit);
-        colsEdit.setText(String.valueOf(Config.getCols()));
-        setListeners(colsEdit, Config.COLS);
+        colsEdit.setText(String.valueOf(Config.getShorter()));
+        setListeners(colsEdit, Config.SHORTER);
 
         minesEdit = findViewById(R.id.mines_edit);
         minesEdit.setText(String.valueOf(Config.getMines()));
