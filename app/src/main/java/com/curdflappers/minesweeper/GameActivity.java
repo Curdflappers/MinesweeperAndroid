@@ -337,4 +337,10 @@ public class GameActivity extends AppCompatActivity
         outState.putString(TIMER, mTimerView.getText().toString());
         outState.putString(MINES, mMinesLeftView.getText().toString());
     }
+
+    public static void reset() {
+        game = null;
+        mStartTime = 0L;
+        mGamePlaying = false;
+    }
 }

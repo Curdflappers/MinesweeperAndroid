@@ -30,7 +30,7 @@ public class Config {
     static int getCols() { return cols; }
     static int getMines() { return mines; }
 
-    private static Difficulty getDifficulty() {
+    static Difficulty getDifficulty() {
         return new Difficulty(getRows(), getCols(), getMines());
     }
     static int getPresetDifficulty() {
