@@ -26,29 +26,35 @@ public class ConfigActivity extends AppCompatActivity
         ConfigEditText.ConfigEditTextListener {
 
     private ConfigEditText rowsEdit, colsEdit, minesEdit;
+    private Difficulty prevDifficulty;
     private View mPlayButton, mActivity;
     private static final float SIDE_PADDING_PCT = 0.2f,
-        TOP_PADDING_PCT = 0.05f;
+            TOP_PADDING_PCT = 0.05f;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_config);
         setToFullScreen();
+        mActivity = findViewById(R.id.activity_config);
         mPlayButton = findViewById(R.id.play_button);
+        prevDifficulty = Config.getDifficulty();
+
+        setEdits();
+        setPresetButtons();
+
+        Config.setListener(this);
+
         mPlayButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(!Config.getDifficulty().equals(prevDifficulty)) {
+                    GameActivity.reset(); // wipe out the old game
+                }
                 Intent i = new Intent(ConfigActivity.this, GameActivity.class);
                 startActivity(i);
             }
         });
-                setEdits();
-        setPresetButtons();
-
-        mActivity = findViewById(R.id.activity_config);
-        Config.setListener(this);
-
         mActivity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -69,56 +75,56 @@ public class ConfigActivity extends AppCompatActivity
         SeekBar sfxBar = findViewById(R.id.sfx_seekbar);
 
         musicBar.setProgress(
-                (int)(soundHelper.getMusicVolume() * musicBar.getMax()));
+                (int) (soundHelper.getMusicVolume() * musicBar.getMax()));
         sfxBar.setProgress(
-                (int)(soundHelper.getSFXVolume() * sfxBar.getMax()));
+                (int) (soundHelper.getSFXVolume() * sfxBar.getMax()));
 
         musicBar.setOnSeekBarChangeListener(
                 new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                float percent = (float) (i) / seekBar.getMax();
-                GameActivity.mSoundHelper.setMusicVolume(percent);
-            }
+                    @Override
+                    public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                        float percent = (float) (i) / seekBar.getMax();
+                        GameActivity.mSoundHelper.setMusicVolume(percent);
+                    }
 
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
+                    @Override
+                    public void onStartTrackingTouch(SeekBar seekBar) {
 
-            }
+                    }
 
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
+                    @Override
+                    public void onStopTrackingTouch(SeekBar seekBar) {
 
-            }
-        });
+                    }
+                });
         sfxBar.setOnSeekBarChangeListener(
                 new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                float percent = (float) (i) / seekBar.getMax();
-                GameActivity.mSoundHelper.setSFXVolume(percent);
-            }
+                    @Override
+                    public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                        float percent = (float) (i) / seekBar.getMax();
+                        GameActivity.mSoundHelper.setSFXVolume(percent);
+                    }
 
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
+                    @Override
+                    public void onStartTrackingTouch(SeekBar seekBar) {
 
-            }
+                    }
 
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
+                    @Override
+                    public void onStopTrackingTouch(SeekBar seekBar) {
 
-            }
-        });
+                    }
+                });
     }
 
     private void setEdits() {
         rowsEdit = findViewById(R.id.rows_edit);
-        rowsEdit.setText(String.valueOf(Config.getRows()));
-        setListeners(rowsEdit, Config.ROWS);
+        rowsEdit.setText(String.valueOf(Config.getLonger()));
+        setListeners(rowsEdit, Config.LONGER);
 
         colsEdit = findViewById(R.id.columns_edit);
-        colsEdit.setText(String.valueOf(Config.getCols()));
-        setListeners(colsEdit, Config.COLS);
+        colsEdit.setText(String.valueOf(Config.getShorter()));
+        setListeners(colsEdit, Config.SHORTER);
 
         minesEdit = findViewById(R.id.mines_edit);
         minesEdit.setText(String.valueOf(Config.getMines()));
@@ -150,8 +156,8 @@ public class ConfigActivity extends AppCompatActivity
         display.getSize(size);
         int width = size.x;
         int height = size.y;
-        int paddingSide = (int)(SIDE_PADDING_PCT * width);
-        int paddingTop = (int)(TOP_PADDING_PCT * height);
+        int paddingSide = (int) (SIDE_PADDING_PCT * width);
+        int paddingTop = (int) (TOP_PADDING_PCT * height);
         mActivity.setPadding(paddingSide, paddingTop, paddingSide, 0);
     }
 
@@ -175,7 +181,7 @@ public class ConfigActivity extends AppCompatActivity
         edit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean b) {
-                if(!b) {
+                if (!b) {
                     ConfigEditText edit = (ConfigEditText) view;
                     edit.setField();
                     edit.notifyListener(ConfigEditText.HIDE_KEYBOARD);
@@ -192,15 +198,14 @@ public class ConfigActivity extends AppCompatActivity
         setToFullScreen();
     }
 
-    private void setToFullScreen()
-    {
+    private void setToFullScreen() {
         findViewById(R.id.activity_config).setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_LOW_PROFILE
-                | View.SYSTEM_UI_FLAG_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
     }
 
     @Override
@@ -220,7 +225,7 @@ public class ConfigActivity extends AppCompatActivity
 
     @Override
     public void hideKeyboard(ConfigEditText edit) {
-        if(edit == null) return;
+        if (edit == null) return;
         edit.setText(String.valueOf(Config.getField(edit.getField())));
         mActivity.requestFocus();
 

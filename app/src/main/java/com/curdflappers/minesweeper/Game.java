@@ -38,7 +38,7 @@ public class Game implements View.OnClickListener, View.OnLongClickListener,
     }
 
     Game(GameListener listener) {
-        mSpots = new Spot[Config.getRows()][Config.getCols()];
+        mSpots = new Spot[Config.getLonger()][Config.getShorter()];
         mMines = Config.getMines();
         mMinefieldPopulated = false;
         for (int r = 0; r < mSpots.length; r++) {
@@ -63,13 +63,13 @@ public class Game implements View.OnClickListener, View.OnLongClickListener,
 
     @Override
     public void onClick(View view) {
-        doAction(((SpotView)view).spot, sweepMode);
+        doAction(((SpotView)view).getSpot(), sweepMode);
     }
 
     @Override
     public boolean onLongClick(View view) {
         if(gameOver) reset();
-        else doAction(((SpotView)view).spot, !sweepMode);
+        else doAction(((SpotView)view).getSpot(), !sweepMode);
 
         vibrate();
         return true;
@@ -263,6 +263,18 @@ public class Game implements View.OnClickListener, View.OnLongClickListener,
                 listener.minesLeftChanged(mMinesLeft);
                 break;
         }
+    }
+
+    void setListener(GameListener listener) {
+        this.listener = listener;
+    }
+
+    int getRows() {
+        return mSpots.length;
+    }
+
+    public int getCols() {
+        return mSpots[0].length;
     }
 
     interface GameListener {
