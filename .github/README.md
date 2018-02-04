@@ -23,14 +23,15 @@ A streamlined implementation of the classic game, made with Android Studio. Cont
 
 - Music and sound effects
 
+- Support device rotation
+
 **Currently in development**
 
-- Support device rotation
+- Save games/preferences between sessions
 
 **Roadmap**
 
 v1.0
-- Save games/preferences between sessions
 - Better user configurations
   - Drag a slider and get a preview of the spot size without manually editing rows, cols
   - Choose minefield density instead of mine count
