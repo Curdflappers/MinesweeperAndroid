@@ -28,7 +28,7 @@ class Spot {
         }
     }
 
-    int getNeighboringMines() { return (mState & 112) >> BOOL_FIELDS; }
+    int getNeighboringMines() { return (mState & 240) >> BOOL_FIELDS; }
     int getRow() { return mRow; }
     int getCol() { return mCol; }
 
@@ -37,7 +37,7 @@ class Spot {
     }
 
     void setNeighboringMines(int neighboringMines) {
-        mState &= -113;
+        mState &= -241;
         mState += (neighboringMines << BOOL_FIELDS);
     }
 
