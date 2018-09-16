@@ -1,7 +1,10 @@
 # MinesweeperAndroid
 A streamlined implementation of the classic game, made with Android Studio. Continued from https://github.com/Curdflappers/Minesweeper, this implementation doesn't drain battery!
 
-**Current elements**
+## Setup
+Download the app from Google Play (search "Curdflappers Minesweeper") or clone this repo and open with Android Studio.
+
+## Current elements
 
 - Customize difficulty (rows, columns, mines)
 
@@ -25,11 +28,11 @@ A streamlined implementation of the classic game, made with Android Studio. Cont
 
 - Support device rotation
 
-**Currently in development**
+## Currently in development
 
 - Save games/preferences between sessions
 
-**Roadmap**
+## Roadmap
 
 v1.0
 - Better user configurations
