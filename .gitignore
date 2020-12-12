@@ -36,7 +36,6 @@ obj/
 .externalNativeBuild
 
 # Binary assets
-*.png
 *.mp3
 *.wav
 
